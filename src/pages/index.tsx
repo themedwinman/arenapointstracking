@@ -1,8 +1,8 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.css";
 import Dashboard from "./dashboard/Dashboard";
-import Header from "./dashboard/components/Header";
-import SideMenu from "./dashboard/components/SideMenu";
+import Header from "./components/Header";
+import SideMenu from "./components/SideMenu";
 
 export default function Home() {
   return (

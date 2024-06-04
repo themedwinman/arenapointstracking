@@ -1,4 +1,5 @@
 import NextAuth from "next-auth/next";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
@@ -8,9 +9,9 @@ export const authOptions: NextAuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             authorization: {
                 params: {
-                    prompt: "consent",
-                    access_type: "offline",
-                    response_type: "code"
+                    prompt: 'consent',
+                    access_type: 'offline',
+                    response_type: 'code'
               }
           }
         }),

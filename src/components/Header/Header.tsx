@@ -130,6 +130,7 @@ const Header = () => {
             ))}
           </Box>
 
+          <Box sx={{paddingRight: 10}}><Typography>Signed in as {session?.user?.email}</Typography></Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Profile Menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -153,11 +154,9 @@ const Header = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem onClick={() => session ? signOut() : signIn()}>
+                  <Typography textAlign="center">{session ? "Logout" : "Login"}</Typography>
                 </MenuItem>
-              ))}
             </Menu>
           </Box>
         </Toolbar>

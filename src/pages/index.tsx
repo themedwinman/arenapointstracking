@@ -4,8 +4,12 @@ import Dashboard from "./dashboard/Dashboard";
 import Header from "@/components/Header";
 import SideMenu from"@/components/SideMenu";
 import Login from "@/components/login";
+import { useSession } from "next-auth/react";
+import { Button } from "@mui/material";
 
 export default function Home() {
+  const { data: session } = useSession()
+
   return (
     <>
       <Head>
@@ -16,9 +20,16 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <Header />
+
+        {
+          session &&(
+            <>
         <SideMenu />
         <Dashboard />
-        <Login />
+            </>
+          )}
+
+          <Login />
       </main>
     </>
   );

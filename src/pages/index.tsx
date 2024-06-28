@@ -1,24 +1,26 @@
+import Header from "@/components/Header";
+import SideMenu from "@/components/SideMenu";
+import Login from "@/components/login";
+import { ScreenShareSharp } from "@mui/icons-material";
+import { Button } from "@mui/material";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Dashboard from "./dashboard/Dashboard";
-import Header from "@/components/Header";
-import SideMenu from"@/components/SideMenu";
-import Login from "@/components/login";
-import { useSession } from "next-auth/react";
-import { Button } from "@mui/material";
+import scss from './home.module.scss';
+import React from "react";
 
-export default function Home() {
+const Home: React.FC = () => {
   const { data: session } = useSession()
 
   return (
     <>
       <Head>
-        <title>Create Next App</title>
+        <title>Arena - Dashboard</title>
         <meta name="description" content="MUI Data dashboard" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <Header />
+      <main className={scss.main}>
 
         {
           session &&(
@@ -33,3 +35,5 @@ export default function Home() {
     </>
   );
 }
+
+export default Home;

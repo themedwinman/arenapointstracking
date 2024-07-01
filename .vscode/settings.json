@@ -1,4 +1,8 @@
 {
     "editor.linkedEditing": true,
-    "editor.wordWrapColumn": 250
+    "editor.wordWrapColumn": 250,
+    "prettier.singleQuote": true,
+    "prettier.useTabs": true,
+    "prettier.jsxSingleQuote": true,
+    "notebook.defaultFormatter": "esbenp.prettier-vscode"
 }

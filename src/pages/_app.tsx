@@ -24,7 +24,7 @@ const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 const App = ({
   Component, pageProps: { session, ...pageProps },
-}) => {
+}: AppProps) => {
 
 
 

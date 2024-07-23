@@ -8,12 +8,12 @@ import { Typography } from '@mui/material';
 import {useMediaQuery} from '@mui/material';
 
 
-export type ThemeTooggleButtonProps = {
+export type ThemeToggleButtonProps = {
     ColorModeContext: React.Context<{ toggleColorMode: () => void }>;
 }
 
 
-const ThemeToggleButton = (props: ThemeTooggleButtonProps) => {
+const ThemeToggleButton = (props: ThemeToggleButtonProps) => {
 
     const mobileCheck = useMediaQuery('(min-width:500px)');
     const { ColorModeContext= React.createContext({ toggleColorMode: () => {} }) } = props;
@@ -27,7 +27,7 @@ const ThemeToggleButton = (props: ThemeTooggleButtonProps) => {
             {mobileCheck && (
                 <Typography>{mode}</Typography>)
                 }
-             <IconButton sx={{mr: 2}} title={mode + ' mode'} aria-label={mode + ' mode button'} onClick={colorMode.toggleColorMode} color="inherit">
+            <IconButton sx={{mr: 2}} title={mode + ' mode'} aria-label={mode + ' mode button'} onClick={colorMode.toggleColorMode} color="inherit">
                 {mode === 'dark' ? <Brightness7Icon/> : <Brightness4Icon/>}
             </IconButton>
         </>

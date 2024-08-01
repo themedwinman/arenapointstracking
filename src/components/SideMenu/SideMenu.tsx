@@ -115,7 +115,7 @@ const SideMenu = () => {
               href={`/dashboard/${menuRouteList[index]}`}
             >
               <ListItemButton
-                onClick={() => setOpen(false)}
+                onClick={() => handleListItemButtonClick(text)}
                 title={text}
                 aria-label={text}
                 sx={{

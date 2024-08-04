@@ -11,7 +11,7 @@ const Layout = (props: any) => {
 
     return(
         <>
-        
+        {/* makes the header stay across all pages */}
         <Head>
             <title>Arena - Dashboard</title>
             <meta name="description" content="MUI Data dashboard" />
@@ -20,6 +20,7 @@ const Layout = (props: any) => {
         </Head>
 
         <main className={scss.layout}>
+            {/* puts the sidemenu on all pages */}
             {session && <SideMenu />}
             {props.children}
         </main>

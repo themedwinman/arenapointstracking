@@ -14,7 +14,7 @@ export type ThemeToggleButtonProps = {
 
 
 const ThemeToggleButton = (props: ThemeToggleButtonProps) => {
-
+// defines queries for different devices so that component will display correctly on different devices
     const mobileCheck = useMediaQuery('(min-width:500px)');
     const { ColorModeContext= React.createContext({ toggleColorMode: () => {} }) } = props;
     const theme = useTheme();

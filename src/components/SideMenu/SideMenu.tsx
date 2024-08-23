@@ -11,6 +11,9 @@ import { Settings } from "@mui/icons-material";
 import NextLink from "next/link";
 import scss from "./SideMenu.module.scss";
 
+
+
+// Creates the sidemenmu component. This is an MUI component see https://mui.com/material-ui/react-drawer/ for more information
 import {
   Divider,
   Drawer,
@@ -47,9 +50,11 @@ const closedMixin = (theme: Theme): CSSObject => ({
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
 });
-
+// define the routes for the side menu
 const menuRouteList = ["data", "profile", "settings", ""];
+// Define the menu items for the side menu
 const menuListTranslations = ["Data", "Profile", "Settings", "Sign Out"];
+// define the icons for the side menu
 const menuListIcons = [
   <EqualizerIcon />,
   <Person2Icon />,
@@ -108,6 +113,7 @@ const SideMenu = () => {
       <Divider />
       <Divider />
       <List>
+        {/* displays the sidemenu items using the menuListTranslations list */}
         {menuListTranslations.map((text, index) => (
           <ListItem key={text} disablePadding sx={{ display: "block" }}>
             <NextLink

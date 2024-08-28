@@ -1,29 +1,56 @@
-import { months } from "@/helper/Util";
+import { houses } from "@/helper/Util";
 
 
-// Mock data for the dashboard graph that is showing data over time
-export const lineChartData = {
-  labels: months({ count: 12 }),
+// Mock data for the bar chart that is showing the total points
+export const barChartData = {
+  labels: houses({ count: 4}),
   datasets: [
     {
-      label: "Points over time",
-      data: [65, 59, 80, 81, 56, 55, 60, 49, 112, 72, 52, 43],
-      fill: false,
-      borderColor: "rgb(75, 192, 192)",
-      tension: 0.1,
+      label: "Total House Points",
+      data: [1000, 1000, 1000, 10000],
+      fill: true,
+      backgroundColor: ["#0000ff", "#ff0000", "#00ff00", "#ffff00"],
+      tension: 1,
     },
   ],
 };
 
 
 // Mock data for the doughnut chart that is showing the distribution of points
-export const doughnutChartData = {
-  labels: ["Red", "Blue", "Yellow"],
+export const TotalPoints = {
+  labels: ["Braddock", "Cook", "Darby", "Youngman"],
   datasets: [
     {
       label: "Points Distribution",
-      data: [300, 50, 100],
-      backgroundColor: ["rgb(255,137,168)", "rgb(178,3,106)", "rgb(165,7,42)"],
+      data: [1000, 1000, 1000, 10000],
+      backgroundColor: ["#0000ff", "#ff0000", "#00ff00", "#ffff00"],
+      hoverOffset: 4,
+    },
+  ],
+};
+
+// Mock data for the doughnut chart that is showing the distribution of points gained
+export const PointsGained = {
+  labels: ["Braddock", "Cook", "Darby", "Youngman"],
+  datasets: [
+    {
+      label: "Points Distribution",
+      data: [1100, 1100, 1100, 11100],
+      backgroundColor: ["#0000ff", "#ff0000", "#00ff00", "#ffff00"],
+      hoverOffset: 4,
+    },
+  ],
+};
+
+
+// Mock data for the doughnut chart that is showing the distribution of points lost
+export const PointsLost = {
+  labels: ["Braddock", "Cook", "Darby", "Youngman"],
+  datasets: [
+    {
+      label: "Points Distribution",
+      data: [100, 100, 100, 1100],
+      backgroundColor: ["#0000ff", "#ff0000", "#00ff00", "#ffff00"],
       hoverOffset: 4,
     },
   ],

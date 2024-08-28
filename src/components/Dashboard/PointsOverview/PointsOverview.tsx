@@ -4,7 +4,8 @@ import { Card, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/system";
 import DataChart from "@/components/DataChart";
-import { lineChartData } from "@/components/mockData";
+import { barChartData } from "@/components/mockData";
+import { alignProperty } from "@mui/material/styles/cssUtils";
 
 export type PointsOverviewType = {
   title: string;
@@ -19,9 +20,23 @@ const PointsOverview = () => {
     <Grid container gap={2} className={scss.wrapper}>
       <Paper className={scss.transactions}>
         <div className={scss.chart}>
-          <Typography>Points Over Time</Typography>
+          {/* <Typography align="center">Total House Points</Typography> */}
           {/* Importing points chart to show on the dashboard */}
-          <DataChart type={"line"} data={lineChartData} />
+          <DataChart
+            type={"bar"}
+            data={{
+              labels: barChartData.labels,
+              datasets: [
+                {
+                  label: barChartData.datasets[0].label,
+                  data: barChartData.datasets[0].data,
+                  fill: barChartData.datasets[0].fill,
+                  backgroundColor: barChartData.datasets[0].backgroundColor,
+                  tension: barChartData.datasets[0].tension,
+                },
+              ],
+            }}
+          />
         </div>
         <div className={scss.cardWrapper}>
           <Card className={scss.card} variant={"outlined"}>
@@ -48,11 +63,11 @@ const PointsOverview = () => {
           </Card>
           <Card className={scss.card} variant={"outlined"}>
             <div className={scss.cardTitle}>
-              <Typography>Points Removed</Typography>
+              <Typography>Points Lost</Typography>
             </div>
             <div className={scss.cardValue}>
               <Typography>23</Typography>
-              <Typography color={theme.palette.success.main} fontSize={14}>
+              <Typography color={theme.palette.error.main} fontSize={14}>
                 Percent%
               </Typography>
             </div>

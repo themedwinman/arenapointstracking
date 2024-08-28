@@ -3,6 +3,7 @@ import scss from "./Layout.module.scss";
 import { useSession } from "next-auth/react";
 import React from "react";
 import Head from "next/head";
+import Footer from "../Footer";
 
 
 // defines the layout component for the application to ensure all pages keep the same styling
@@ -26,6 +27,7 @@ const Layout = (props: any) => {
             {/* puts the sidemenu on all pages */}
             {session && <SideMenu />}
             {props.children}
+            <Footer />
         </main>
 
         </>

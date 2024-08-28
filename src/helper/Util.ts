@@ -1,27 +1,19 @@
-const MONTHS = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+const HOUSES = [
+    "Braddock",
+    "Cook",
+    "Darby",
+    "Youngman",
   ];
   
-  export const months = (config: any) => {
+  export const houses = (config: any) => {
     const cfg = config || {};
-    const count = cfg.count || 12;
+    const count = cfg.count || 4;
     const section = cfg.section;
     const values = [];
     let i, value;
   
     for (i = 0; i < count; ++i) {
-      value = MONTHS[Math.ceil(i) % 12];
+      value = HOUSES[Math.ceil(i) % 4];
       values.push(value.substring(0, section));
     }
   

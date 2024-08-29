@@ -56,10 +56,10 @@ const menuRouteList = ["data", "profile", "settings", ""];
 const menuListTranslations = ["Data", "Profile", "Settings", "Sign Out"];
 // define the icons for the side menu
 const menuListIcons = [
-  <EqualizerIcon />,
-  <Person2Icon />,
-  <Settings />,
-  <ExitToAppIcon />,
+  <EqualizerIcon key={0} />,
+  <Person2Icon key={1} />,
+  <Settings key={2} />,
+  <ExitToAppIcon key={3}/>,
 ];
 
 const SideMenu = () => {

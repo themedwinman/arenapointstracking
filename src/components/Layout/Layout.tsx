@@ -12,7 +12,7 @@ const Layout = (props: any) => {
 
     return(
         <>
-        {/* makes the header stay across all pages */}
+
         <Head>
             <title>Arena - Dashboard</title>
             <meta name="description" content="Arena House Points Tracking" />

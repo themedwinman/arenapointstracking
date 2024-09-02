@@ -15,7 +15,7 @@ const Layout = (props: any) => {
         {/* makes the header stay across all pages */}
         <Head>
             <title>Arena - Dashboard</title>
-            <meta name="description" content="MUI Data dashboard" />
+            <meta name="description" content="Arena House Points Tracking" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link rel="icon" href="/favicon.ico" />
         </Head>

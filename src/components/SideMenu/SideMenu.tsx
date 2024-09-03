@@ -10,6 +10,7 @@ import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { Settings } from "@mui/icons-material";
 import NextLink from "next/link";
 import scss from "./SideMenu.module.scss";
+// import Dashboard from "@/pages/dashboard/Dashboard";
 
 
 
@@ -51,15 +52,16 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 // define the routes for the side menu
-const menuRouteList = ["data", "profile", "settings", ""];
+const menuRouteList = ["","data", "profile", "settings", ""];
 // Define the menu items for the side menu
-const menuListTranslations = ["Data", "Profile", "Settings", "Sign Out"];
+const menuListTranslations = ["Dashboard", "Points", "Profile", "Settings", "Sign Out"];
 // define the icons for the side menu
 const menuListIcons = [
-  <EqualizerIcon key={0} />,
-  <Person2Icon key={1} />,
-  <Settings key={2} />,
-  <ExitToAppIcon key={3}/>,
+  <HomeIcon key={0} />,
+  <EqualizerIcon key={1} />,
+  <Person2Icon key={2} />,
+  <Settings key={3} />,
+  <ExitToAppIcon key={4}/>,
 ];
 
 const SideMenu = () => {

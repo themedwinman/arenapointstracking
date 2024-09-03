@@ -1,13 +1,16 @@
 import { houses } from "@/helper/Util";
 
 
+export const Points: Array<number> = [1000, 2000, 500, 6000]
+
+
 // Mock data for the bar chart that is showing the total points
 export const barChartData = {
   labels: houses({ count: 4}),
   datasets: [
     {
       label: "Total House Points",
-      data: [1000, 1000, 1000, 10000],
+      data: Points,
       fill: true,
       backgroundColor: ["#0000ff", "#ff0000", "#00ff00", "#ffff00"],
       tension: 1,
@@ -22,7 +25,7 @@ export const TotalPoints = {
   datasets: [
     {
       label: "Points Distribution",
-      data: [1000, 1000, 1000, 10000],
+      data: Points,
       backgroundColor: ["#0000ff", "#ff0000", "#00ff00", "#ffff00"],
       hoverOffset: 4,
     },

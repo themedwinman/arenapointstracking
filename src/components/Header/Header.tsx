@@ -16,7 +16,7 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import { InputProps } from '@mui/material';
 import ThemeToggleButton from '../ThemeToggleButton';
 import { useMediaQuery } from '@mui/material';
-
+import Dashboard from '@/pages/dashboard/Dashboard';
 
 export type HeaderProps = {
   ColorModeContext: React.Context<{ toggleColorMode: () => void }>;
@@ -56,7 +56,7 @@ const Header = (props: HeaderProps) => {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="./Dashboard"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },

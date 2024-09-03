@@ -54,7 +54,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
 // define the routes for the side menu
 const menuRouteList = ["","data", "profile", "settings", ""];
 // Define the menu items for the side menu
-const menuListTranslations = ["Dashboard", "Points", "Profile", "Settings", "Sign Out"];
+const menuListTranslations = ["Home", "Points", "Profile", "Settings", "Sign Out"];
 // define the icons for the side menu
 const menuListIcons = [
   <HomeIcon key={0} />,

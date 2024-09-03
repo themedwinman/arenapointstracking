@@ -4,13 +4,14 @@
     grid-template-columns: 1fr;
 
 @media screen and (min-width: 900px) {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 0.5fr 0.5fr 0.5fr;
     }
 }
 
 .dataCard {
     position: relative;
     top: 1rem;
+    bottom: 5rem;
     height: 100%;
     width: calc(100% - 0.1rem);
     

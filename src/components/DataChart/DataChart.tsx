@@ -15,7 +15,7 @@ const DataChart = (props: ChartConfiguration) => {
         ...props,
         options: {
           ...options,
-          ...darkOptions,
+          // ...darkOptions,
         },
       });
       return () => {

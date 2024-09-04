@@ -20,13 +20,14 @@ export type PointsOverviewType = {
   const PointsOverview = () => {
     const theme = useTheme(); // Get the theme
     const textColor = theme.palette.text.primary; // Get the primary text color
-  
-    // Debugging: Log the text color to ensure it's correct
-    console.log('Text color from theme:', textColor);
+    const font = "Roboto"; // Set the font for the chart
+    const mode = theme.palette.mode; // Get the mode of the theme
+    const gridColor = mode === "dark" ? "#0f0f0f" : "rgb(151, 151, 151)"; // Set the grid color for the chart
   
     useEffect(() => {
       // Set the default color for all charts
       Chart.defaults.color = textColor;
+      Chart.defaults.font.family = font; // Set the font for the chart
     }, [textColor]);
   
     return (
@@ -50,24 +51,28 @@ export type PointsOverviewType = {
                 scales: {
                   x: {
                     ticks: {
-                      color: textColor, // Set the text color for x-axis
+                      color: textColor, // Set the text color for x-axis  
                     },
+                    grid: {
+                      color: gridColor, // Set the text color for x-axis grid
+                    }
                   },
                   y: {
                     ticks: {
                       color: textColor, // Set the text color for y-axis
                     },
+                    grid: {
+                      color: gridColor, // Set the text color for y-axis grid
+                    }
                   },
                 },
                 plugins: {
                   legend: {
-                    labels: {
-                      color: textColor, // Set the text color for legend
-                    },
+                    display: false,
                   },
                   title: {
                     display: true,
-                    text: 'Your Chart Title',
+                    text: 'Total Points Per House',
                     color: textColor, // Set the text color for title
                   },
                 },

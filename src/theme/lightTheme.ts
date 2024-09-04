@@ -14,6 +14,7 @@ const lightTheme: ThemeOptions = {
             default: "#f5f5f5",
             paper: "#ffffff",
         },
+        
     }
 };
 

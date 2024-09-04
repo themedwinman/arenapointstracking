@@ -11,7 +11,10 @@ import darkTheme from "@/theme/darkTheme";
 import lightTheme from "@/theme/lightTheme";
 import Header from "@/components/Header";
 import Layout from "@/components/Layout";
-
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
 
 interface CustomPageProps {

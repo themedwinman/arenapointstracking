@@ -1,8 +1,8 @@
 import { houses } from "@/helper/Util";
 
-export const PointsGainedArray: Array<number> = [1000, 4000, 500, 6000]
+export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000]
 
-export const PointsLostArray: Array<number> = [500, 3900, 400, 250]
+export const PointsLostArray: Array<number> = [200, 1200, 400, 750]
 
 export const TotalPointsArray: Array<number> = [PointsGainedArray[0] - PointsLostArray[0], PointsGainedArray[1] - PointsLostArray[1], PointsGainedArray[2] - PointsLostArray[2], PointsGainedArray[3] - PointsLostArray[3]]
 

@@ -3,6 +3,9 @@ import DataCard from "../DataCard";
 import React from "./index";
 import { Grid } from "@mui/material";
 import scss from "./DataRibbon.module.scss";
+import { TotalPointsArray } from "@/components/mockData";
+
+
 
 const DataRibbon = () => {
     return (
@@ -10,7 +13,7 @@ const DataRibbon = () => {
       <Grid>
         <DataCard
           title={"Total Braddock Points"}
-          value={"1000"}
+          value= {String(TotalPointsArray[0])}
           description={
             "Total amount of Braddock's House Points this year"
           }
@@ -19,14 +22,14 @@ const DataRibbon = () => {
       <Grid>
         <DataCard
           title={"Total Cook Points"}
-          value={"1000"}
+          value={String(TotalPointsArray[1])}
           description={"Total amount of Cook's House Points this year"}
         />
       </Grid>
       <Grid>
         <DataCard
           title={"Total Darby Points"}
-          value={"1000"}
+          value={String(TotalPointsArray[2])}
           description={
             "Total amount of Darby's House Points this year"
           }
@@ -35,7 +38,7 @@ const DataRibbon = () => {
       <Grid>
         <DataCard
         title={"Total Youngman Points"}
-        value={"10000"}
+        value={String(TotalPointsArray[3])}
         description={"Total amount of Youngman's House Points this year"}
         />
       </Grid>

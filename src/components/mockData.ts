@@ -1,4 +1,5 @@
 import { houses } from "@/helper/Util";
+import { BorderColor } from "@mui/icons-material";
 
 export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000]
 
@@ -39,7 +40,7 @@ export const TotalPoints = {
 
 // Mock data for the doughnut chart that is showing the distribution of points gained
 export const PointsGained = {
-  labels: ["Braddock", "Cook", "Darby", "Youngman"],
+  labels: houses({ count: 4}),
   datasets: [
     {
       label: "Points Distribution",
@@ -53,7 +54,7 @@ export const PointsGained = {
 
 // Mock data for the doughnut chart that is showing the distribution of points lost
 export const PointsLost = {
-  labels: ["Braddock", "Cook", "Darby", "Youngman"],
+  labels: houses({ count: 4}),
   datasets: [
     {
       label: "Points Distribution",

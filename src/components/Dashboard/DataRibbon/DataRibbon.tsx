@@ -4,44 +4,22 @@ import React from "./index";
 import { Grid } from "@mui/material";
 import scss from "./DataRibbon.module.scss";
 import { TotalPointsArray } from "@/components/mockData";
+import { houses } from "@/helper/Util";
 
 
 
 const DataRibbon = () => {
     return (
- <Grid container gap={2} className={scss.dataRibbon}>
-      <Grid>
+<Grid container gap={2} className={scss.dataRibbon} sx={{"--columns": `repeat(clamp(1, ${houses.length},6), minmax(0, 1fr))`}}>
+  {houses.map((house, index) => (<Grid>
         <DataCard
-          title={"Total Braddock Points"}
-          value= {String(TotalPointsArray[0])}
+          title={`Total ${house} Points`}
+          value= {String(TotalPointsArray[index])}
           description={
-            "Total amount of Braddock's House Points this year"
+            `Total amount of ${house} House Points this year`
           }
         />
-      </Grid>
-      <Grid>
-        <DataCard
-          title={"Total Cook Points"}
-          value={String(TotalPointsArray[1])}
-          description={"Total amount of Cook's House Points this year"}
-        />
-      </Grid>
-      <Grid>
-        <DataCard
-          title={"Total Darby Points"}
-          value={String(TotalPointsArray[2])}
-          description={
-            "Total amount of Darby's House Points this year"
-          }
-        />
-      </Grid>
-      <Grid>
-        <DataCard
-        title={"Total Youngman Points"}
-        value={String(TotalPointsArray[3])}
-        description={"Total amount of Youngman's House Points this year"}
-        />
-      </Grid>
+      </Grid>))}
     </Grid>
 
 

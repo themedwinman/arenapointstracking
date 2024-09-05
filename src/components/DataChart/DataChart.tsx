@@ -8,7 +8,7 @@ const DataChart = (props: ChartConfiguration) => {
   const { data, options } = props;
   const chartRef = useRef<HTMLCanvasElement>(null);
 
-  const labels = houses({ count: 4 });
+  const labels = houses;
   useEffect(() => {
     if (chartRef.current) {
       const chart = new Chart(chartRef.current, {

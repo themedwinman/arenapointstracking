@@ -2,7 +2,7 @@ import { houses } from "@/helper/Util";
 import { BorderColor } from "@mui/icons-material";
 import { houseColours } from "@/helper/Util";
 
-export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000]
+export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000, 3000]
 
 export const PointsLostArray: Array<number> = [200, 1200, 400, 750]
 
@@ -23,6 +23,7 @@ export const barChartData = {
       fill: true,
       backgroundColor: houseColours,
       tension: 1,
+
     },
   ],
 };
@@ -36,7 +37,9 @@ export const TotalPoints = {
       label: "Points Distribution",
       data: TotalPointsArray,
       backgroundColor: houseColours,
-      hoverOffset: 4,
+      borderColor: "#666",
+      borderWidth: 0.5,
+      hoverOffset: 8,
     },
   ],
 };
@@ -49,7 +52,9 @@ export const PointsGained = {
       label: "Points Distribution",
       data: PointsGainedArray,
       backgroundColor: houseColours,
-      hoverOffset: 4,
+      hoverOffset: 8,
+      borderColor: "#666",
+      borderWidth: 0.5
     },
   ],
 };
@@ -63,7 +68,9 @@ export const PointsLost = {
       label: "Points Distribution",
       data: PointsLostArray,
       backgroundColor: houseColours,
-      hoverOffset: 4,
+      hoverOffset: 8,
+      borderColor: "#666",
+      borderWidth: 0.5
     },
   ],
 };

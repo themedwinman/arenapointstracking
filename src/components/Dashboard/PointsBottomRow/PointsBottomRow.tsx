@@ -4,7 +4,7 @@ import { Paper, useTheme, Grid } from "@mui/material";
 import { TotalPoints, PointsGained, PointsLost } from "@/components/mockData";
 import scss from "./PointsBottomRow.module.scss";
 import { Chart } from "chart.js";
-import { BorderAll } from '@mui/icons-material';
+import { BorderAll, BorderColor } from '@mui/icons-material';
 
 const PointsBottomRow = () => {
   const theme = useTheme(); // Get the theme
@@ -29,6 +29,7 @@ const PointsBottomRow = () => {
         labels: {
           color: textColor,
         },
+        borderColor: "#000",
       },
     },
   };

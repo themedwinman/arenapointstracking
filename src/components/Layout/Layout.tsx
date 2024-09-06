@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import Head from "next/head";
 import Footer from "../Footer";
-
+import DataRibbon from "../Dashboard/DataRibbon"
 
 // defines the layout component for the application to ensure all pages keep the same styling
 const Layout = (props: any) => {

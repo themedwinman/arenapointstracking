@@ -1,0 +1,76 @@
+.container {
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 2rem;
+  }
+  
+  .paper {
+    padding: 3rem;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+  }
+  
+  .toggleButtonGroup {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .toggleButton {
+    flex: 1;
+    margin: 0.5rem;
+    border: none; /* Remove border for the toggle buttons */
+    border-radius: 4px; /* Rounded corners */
+    transition: transform 0.3s, background-color 0.3s; /* Smooth transition for transform and background color */
+    // color: #ffffff; /* White text for the toggle buttons */
+    background-color: transparent; /* Default background color */
+  }
+  
+  .toggleButton:hover {
+    transform: translateY(-3px); /* Lift the button slightly on hover */
+    background-color: var(--hover-color); /* Show background color on hover */
+  }
+  
+  .toggleButton.Mui-selected {
+    transform: translateY(-5px) !important; /* Lift the selected button more prominently */
+    background-color: var(--selected-color) !important; /* Keep background color when selected */
+  }
+  
+  
+  .textField {
+    margin-top: 1rem;
+  }
+  
+  .submitButton {
+    margin-top: 2rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    background-color: #1976d2; /* Primary color for the submit button */
+    color: #ffffff; /* White text for the submit button */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+  }
+  
+  .submitButton:hover {
+    background-color: #115293; /* Darker shade for hover state */
+  }
+  
+  .actionButtonGroup {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .actionButton {
+    flex: 1;
+    margin: 0.5rem;
+    border: 1px solid; /* Subtle border */
+    border-radius: 4px; /* Rounded corners */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+  }
+  
+  .actionButton.Mui-selected {
+    border-color: #1976d2; /* Primary color for selected state */
+  }

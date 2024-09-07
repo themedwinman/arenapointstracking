@@ -1,9 +1,12 @@
-import { integer, sqliteTable } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 
 
-const table = sqliteTable('table', {
-  id: integer('id')
+export const houses = sqliteTable('houses', {
+  id: integer('id').notNull().primaryKey(),
+  houseName: text('house_name').notNull().unique(),
+  houseColour: text('house_colour').notNull().unique(),
+  houseTotalPoints: integer('house_total_points'),
 });
 
 

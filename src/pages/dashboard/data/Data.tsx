@@ -1,10 +1,11 @@
-import { Grid, Paper, Typography, FormControl, TextField, Button, ToggleButtonGroup, useTheme, Autocomplete } from "@mui/material";
+import { Grid, Paper, Typography, FormControl, TextField, Button, ToggleButtonGroup, useTheme, Autocomplete, Alert } from "@mui/material";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import { houses, houseColours } from "@/helper/Util"; // Assuming houses is an array of house names and houseColors is an array of corresponding colors
 import scss from "./Data.module.scss"; // Assuming you have a CSS module for styling
 import { styled } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
+import withAuthorization from "@/components/hoc/withAuthorization";
 
 interface Student {
   id: string;
@@ -28,7 +29,7 @@ const HouseToggleButton = styled(ToggleButton)(({ theme }) => ({
 const ActionToggleButton = styled(ToggleButton)(({ theme }) => ({
   flex: 1,
   margin: '0.5rem',
-  border: `1px solid "rgba(0,0,0,0"`, // Light outline for the toggle buttons
+  border: `1px solid ${theme.palette.text.primary}`, // Light outline for the toggle buttons
   borderRadius: '4px', // Rounded corners
   color: theme.palette.text.primary, // Text color matching the theme
   '&.Mui-selected': {
@@ -36,7 +37,7 @@ const ActionToggleButton = styled(ToggleButton)(({ theme }) => ({
   },
 }));
 
-const Data = () => {
+const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   const theme = useTheme(); // Access the theme
   const [selectedHouse, setSelectedHouse] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -44,11 +45,13 @@ const Data = () => {
   const [points, setPoints] = useState(0);
   const [eventDescription, setEventDescription] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch students from the database
   useEffect(() => {
-      const fetchStudents = async () => {
-      const response = await fetch('/api/students'); // Change to real api endpoint once available
+    // Replace with your actual data fetching logic
+    const fetchStudents = async () => {
+      const response = await fetch('/api/students'); // Example API endpoint
       const data = await response.json();
       setStudents(data);
     };
@@ -78,6 +81,15 @@ const Data = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    // Validate form
+    if (!selectedHouse) {
+      setError("Please select a house.");
+      return;
+    }
+    if (points <= 0) {
+      setError("Please enter a valid amount of points.");
+      return;
+    }
     // Logic to add or remove points from the selected house and student
     console.log(`House: ${selectedHouse}, Student: ${selectedStudent?.name}, Action: ${action}, Points: ${points}, Event: ${eventDescription}`);
     // Reset form
@@ -86,6 +98,7 @@ const Data = () => {
     setAction("add");
     setPoints(0);
     setEventDescription("");
+    setError(null);
   };
 
   return (
@@ -103,6 +116,7 @@ const Data = () => {
           <Typography variant="h6" gutterBottom>
             Manage house points efficiently
           </Typography>
+          {error && <Alert severity="error">{error}</Alert>}
           <form onSubmit={handleSubmit}>
             <FormControl fullWidth margin="normal">
               <ToggleButtonGroup
@@ -117,7 +131,6 @@ const Data = () => {
                   <HouseToggleButton
                     key={house}
                     value={house}
-                    aria-label={house}
                     style={{
                       backgroundColor: houseColours[index],
                       color: theme.palette.getContrastText(houseColours[index]),

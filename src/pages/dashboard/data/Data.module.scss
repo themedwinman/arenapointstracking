@@ -30,7 +30,7 @@
   }
   
   .toggleButton:hover {
-    transform: translateY(-3px); /* Lift the button slightly on hover */
+    transform: translateY(-3px) !important; /* Lift the button slightly on hover */
     background-color: var(--hover-color); /* Show background color on hover */
   }
   

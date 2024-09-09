@@ -1,4 +1,5 @@
 import { Grid, Paper, Typography, FormControl, TextField, Button, ToggleButtonGroup, useTheme, Autocomplete, Alert } from "@mui/material";
+import axios from 'axios';
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 import { houses, houseColours } from "@/helper/Util"; // Assuming houses is an array of house names and houseColors is an array of corresponding colors
@@ -42,10 +43,14 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   const [selectedHouse, setSelectedHouse] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [action, setAction] = useState("add");
-  const [points, setPoints] = useState(0);
+  const [pointsValue, setPoints] = useState(0);
   const [eventDescription, setEventDescription] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const setPointsValue = (value: number) => {
+    setPoints(value);
+  };
 
   // Fetch students from the database
   useEffect(() => {
@@ -72,34 +77,46 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   };
 
   const handlePointsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPoints(Number(event.target.value));
+    setPointsValue(Number(event.target.value));
   };
 
   const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEventDescription(event.target.value);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     // Validate form
-    if (!selectedHouse) {
-      setError("Please select a house.");
-      return;
-    }
-    if (points <= 0) {
+    if (pointsValue <= 0) { // Use pointsValue consistently
       setError("Please enter a valid amount of points.");
       return;
     }
     // Logic to add or remove points from the selected house and student
-    console.log(`House: ${selectedHouse}, Student: ${selectedStudent?.name}, Action: ${action}, Points: ${points}, Event: ${eventDescription}`);
-    // Reset form
-    setSelectedHouse(null);
-    setSelectedStudent(null);
-    setAction("add");
-    setPoints(0);
-    setEventDescription("");
-    setError(null);
+    try {
+      const response = await axios.post('/api/addPoints', {
+        selectedHouse,
+        selectedStudent,
+        action,
+        pointsValue, // Use pointsValue consistently
+        eventDescription,
+      });
+      if (response.status === 200) {
+        // Handle successful response
+        console.log('Data added successfully');
+        // Reset form
+        setSelectedHouse(null);
+        setSelectedStudent(null);
+        setAction("add");
+        setPointsValue(0);
+        setEventDescription("");
+        setError(null);
+      }
+    } catch (error) {
+      setError('Failed to add data');
+    }
   };
+  
+  console.log(`House: ${selectedHouse}, Student: ${selectedStudent?.name}, Action: ${action}, Points: ${pointsValue}, Event: ${eventDescription}`);
 
   return (
     <>
@@ -179,7 +196,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
               margin="normal"
               label="Points"
               type="number"
-              value={points}
+              value={pointsValue}
               onChange={handlePointsChange}
               required
               className={scss.textField}
@@ -206,3 +223,6 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
 };
 
 export default Data;
+
+
+

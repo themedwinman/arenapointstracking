@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DataChart from "@/components/DataChart";
 import { Paper, useTheme, Grid } from "@mui/material";
-import { TotalPoints, PointsGained, PointsLost } from "@/components/mockData";
+import { TotalPoints, PointsGained, PointsLost } from "@/components/dataCache";
 import scss from "./PointsBottomRow.module.scss";
 import { Chart } from "chart.js";
 import { BorderAll, BorderColor } from '@mui/icons-material';

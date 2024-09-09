@@ -3,7 +3,7 @@ import DataCard from "../DataCard";
 import React from "./index";
 import { Grid } from "@mui/material";
 import scss from "./DataRibbon.module.scss";
-import { TotalPointsArray } from "@/components/mockData";
+import { TotalPointsArray } from "@/components/dataCache";
 import { houses } from "@/helper/Util";
 
 const DataRibbon = () => {

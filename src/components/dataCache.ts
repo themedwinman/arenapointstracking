@@ -1,12 +1,12 @@
 import { houses } from "@/helper/Util";
 import { BorderColor } from "@mui/icons-material";
 import { houseColours } from "@/helper/Util";
+import { GetServerSideProps } from "next";
+import { getServerSideProps } from "@/pages";
 
 export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000, 3000, 8000]
 
 export const PointsLostArray: Array<number> = [200, 1200, 400, 750, 0, 1000]
-
-// export const TotalPointsArray: Array<number> = [PointsGainedArray[0] - PointsLostArray[0], PointsGainedArray[1] - PointsLostArray[1], PointsGainedArray[2] - PointsLostArray[2], PointsGainedArray[3] - PointsLostArray[3]]
 
 export const TotalPointsArray = houses.map((house, index) => { return (PointsGainedArray[index]??0) - (PointsLostArray[index]??0) });
 

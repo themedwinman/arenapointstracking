@@ -4,10 +4,10 @@ import { Card, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/system";
 import DataChart from "@/components/DataChart";
-import { barChartData, PointsGainedArray, TotalPointsArray } from "@/components/mockData";
+import { barChartData, PointsGainedArray, TotalPointsArray } from "@/components/dataCache";
 import { alignProperty } from "@mui/material/styles/cssUtils";
-// import { LostPointsPercent } from "@/components/mockData";
-import { PointsLostArray } from "@/components/mockData";
+// import { LostPointsPercent } from "@/components/dataCache";
+import { PointsLostArray } from "@/components/dataCache";
 import { Chart } from "chart.js";
 
 export type PointsOverviewType = {

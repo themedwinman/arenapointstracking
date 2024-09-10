@@ -54,9 +54,8 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
 
   // Fetch students from the database
   useEffect(() => {
-    // Replace with your actual data fetching logic
-    const fetchStudents = async () => {
-      const response = await fetch('/api/students'); // Example API endpoint
+      const fetchStudents = async () => {
+      const response = await fetch('/api/students');
       const data = await response.json();
       setStudents(data);
     };
@@ -222,7 +221,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   );
 };
 
-export default Data;
+export default withAuthorization(Data);
 
 
 

@@ -26,7 +26,8 @@
     "chart.js": "^4.4.4",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
-    "next": "^14.2.8",
+    "knex": "^3.1.0",
+    "next": "^14.2.9",
     "next-auth": "^4.24.7",
     "nextjs": "^0.0.3",
     "openssl": "^2.0.0",
@@ -35,8 +36,10 @@
     "react-dom": "^18.3.1",
     "rf": "^0.0.1",
     "sass": "^1.77.6",
+    "scss": "^0.2.4",
     "storybook": "^8.1.11",
-    "turso": "^0.1.0"
+    "turso": "^0.1.0",
+    "styled-components": "^6.1.13"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

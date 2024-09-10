@@ -1,25 +1,39 @@
-// src/components/hoc/withAuthorization.tsx
 import React from 'react';
-import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 interface WithAuthorizationProps {
   userRole: string;
+  [key: string]: any; // Allow any additional props
 }
 
-const withAuthorization = (WrappedComponent: React.ComponentType) => {
+// Styled component for the "Not Authorized" message
+const NotAuthorizedMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff6347; // Tomato color for fun
+  text-align: center;`;
+
+const withAuthorization = (WrappedComponent: React.ComponentType<any>) => {
   const WithAuthorization: React.FC<WithAuthorizationProps> = (props) => {
-    const router = useRouter();
-    const { userRole } = props;
+    const { userRole, ...restProps } = props;
 
     // Check if the user is an admin or superadmin
     if (userRole !== 'admin' && userRole !== 'superadmin') {
-      // Redirect to a "Not Authorized" page or home page
-      router.push('/not-authorized');
-      return null;
+      // Render a "Not Authorized" message or component
+      return (
+        <NotAuthorizedMessage>
+          🚫 You are not authorized to view this page. Please contact your administrator. 🚫
+        </NotAuthorizedMessage>
+      );
     }
 
     // Render the wrapped component if the user is authorized
-    return <WrappedComponent/>;
+    return <WrappedComponent {...restProps} />;
   };
 
   return WithAuthorization;

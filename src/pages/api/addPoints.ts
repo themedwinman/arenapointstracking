@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Construct the SQL query
       const query = db.insert(points).values({
         associatedHouse: selectedHouse,
-        associatedStudent: selectedStudent ? selectedStudent.id : null, // Handle optional studentId
+        associatedStudent: selectedStudent ? selectedStudent.id : 'No Student Linked', // Handle optional studentId
         pointsGained: action === 'add' ? pointsValue : 0,
         pointsLost: action === 'remove' ? pointsValue : 0,
       });

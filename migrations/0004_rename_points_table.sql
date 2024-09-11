@@ -1,1 +1,0 @@
-ALTER TABLE points RENAME TO points_old;

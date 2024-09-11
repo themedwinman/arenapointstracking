@@ -1,46 +1,76 @@
-import { Grid, Paper, Typography, FormControl, TextField, Button, useTheme, Alert } from "@mui/material";
-import axios from 'axios';
-import Head from "next/head";
-import React, { useState } from "react";
-import withAuthorization from "@/components/hoc/withAuthorization";
+import React, { useState, useEffect } from 'react';
+import { Paper, Typography, FormControl, TextField, Button, Alert, List, ListItem, ListItemText, IconButton, useTheme } from '@mui/material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
+import { getStudents } from '../../api/getStudents'; // Assume these API functions are implemented
+import { addStudents } from '@/db/actions';
+import { removeStudent } from '@/db/actions';
 
 interface Student {
   id: string;
-  name: string;
+  studentName: string;
+  surname: string;
+  studentId: string;
+  house: string;
 }
 
-const AddStudent: React.FC<{}> = () => {
-  const theme = useTheme(); // Access the theme
-  const [studentName, setStudentName] = useState("");
+
+const Settings: React.FC = () => {
+  const [studentName, setStudentName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [house, setHouse] = useState('');
+  const [students, setStudents] = useState<Student[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const theme = useTheme()
 
-  const handleStudentNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStudentName(event.target.value);
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    // Validate form
-    if (!studentName) {
-      setError("Please enter a student name.");
-      return;
-    }
-    // Logic to add student to the database
-    try {
-      const response = await axios.post('/api/addStudent', {
-        name: studentName,
-      });
-      if (response.status === 200) {
-        // Handle successful response
-        console.log('Student added successfully');
-        // Reset form
-        setStudentName("");
-        setError(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const students = await getStudents();
+        setStudents(students);
+      } catch (error) {
+        setError('Failed to fetch students');
       }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleStudentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setStudentName(e.target.value);
+  const handleSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value);
+  const handleStudentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => setStudentId(e.target.value);
+  const handleHouseChange = (e: React.ChangeEvent<HTMLInputElement>) => setHouse(e.target.value);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addStudents({ studentName, surname, studentId, house });
+      setStudents(await getStudents()); // Refresh the list
+      setStudentName('');
+      setSurname('');
+      setStudentId('');
+      setHouse('');
+      setError(null);
     } catch (error) {
       setError('Failed to add student');
     }
   };
+
+ // api.ts
+
+const removeStudentHandler = async (req: { method: string; body: { studentId: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { message?: string; error?: string; }): void; new(): any; }; }; }) => {
+  if (req.method === 'DELETE') {
+    try {
+      const { studentId } = req.body;
+      await removeStudent(studentId);
+      res.status(200).json({ message: 'Student removed successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to remove student' });
+    }
+  } else {
+    res.status(405).json({ error: 'Method not allowed' });
+  }
+};
 
   return (
     <Paper style={{ padding: '20px', backgroundColor: theme.palette.background.paper }}>
@@ -54,22 +84,40 @@ const AddStudent: React.FC<{}> = () => {
             onChange={handleStudentNameChange}
             style={{ color: theme.palette.text.primary }}
           />
+          <TextField
+            label="Surname"
+            value={surname}
+            onChange={handleSurnameChange}
+            style={{ color: theme.palette.text.primary }}
+          />
+          <TextField
+            label="Student ID"
+            value={studentId}
+            onChange={handleStudentIdChange}
+            style={{ color: theme.palette.text.primary }}
+          />
+          <TextField
+            label="House"
+            value={house}
+            onChange={handleHouseChange}
+            style={{ color: theme.palette.text.primary }}
+          />
           <Button type="submit" style={{ marginTop: '20px', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>Add Student</Button>
         </FormControl>
       </form>
+      <Typography style={{ fontSize: '24px', fontWeight: 'bold', color: theme.palette.text.primary, marginTop: '20px' }}>Current Students</Typography>
+      <List>
+        {students.map((student: any) => (
+          <ListItem key={student.id}>
+            <ListItemText primary={`${student.studentName} ${student.surname}`} secondary={`ID: ${student.studentId}, House: ${student.house}`} />
+            <IconButton edge="end" aria-label="delete" onClick={() => removeStudent(student.id)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
     </Paper>
   );
 };
 
-const Settings: React.FC = () => {
-  return (
-    <div>
-      <Head>
-        <title>Settings</title>
-      </Head>
-      <AddStudent />
-    </div>
-  );
-};
-
-export default withAuthorization(Settings);
+export default Settings;

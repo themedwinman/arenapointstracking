@@ -16,8 +16,7 @@
   .toggleButtonGroup {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-  }
+    flex-wrap: wrap;  }
   
   .toggleButton {
     flex: 1;
@@ -27,6 +26,8 @@
     transition: transform 0.3s, background-color 0.3s; /* Smooth transition for transform and background color */
     // color: #ffffff; /* White text for the toggle buttons */
     background-color: transparent; /* Default background color */
+    padding: 0.75rem;
+
   }
   
   .toggleButton:hover {

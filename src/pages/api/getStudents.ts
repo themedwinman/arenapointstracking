@@ -1,10 +1,8 @@
-"use server"
-
-// getStudents.ts
+import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '@/db';
 import { students } from '@/db/schema/students';
 
-interface Student {
+export interface Student {
   id: string;
   studentName: string;
   surname: string;
@@ -12,18 +10,30 @@ interface Student {
   house: string;
 }
 
-export const getStudents = async (): Promise<Student[]> => {
+const getStudents = async (): Promise<Student[]> => {
   try {
     const fetchStudents = await db.select().from(students).execute();
     return fetchStudents.map((student: any) => ({
-        id: student.id as string,
-        studentName: student.student_name as string,
-        surname: student.surname as string,
-        studentId: student.student_id as string,
-        house: student.house as string,
+      id: student.id as string,
+      studentName: student.student_name as string,
+      surname: student.surname as string,
+      studentId: student.student_id as string,
+      house: student.house as string,
     }));
   } catch (error) {
     console.error('Failed to fetch students:', error);
     throw new Error('Failed to fetch students');
   }
 };
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const students = await getStudents();
+    res.status(200).json(students); // Send the students as JSON response
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ error: 'Failed to fetch students' });
+  }
+};
+
+export default handler;

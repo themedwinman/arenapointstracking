@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Typography, FormControl, TextField, Button, Alert, List, ListItem, ListItemText, IconButton, useTheme } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { getStudents } from '../../api/getStudents'; // Assume these API functions are implemented
-import { addStudents } from '@/db/actions';
-import { removeStudent } from '@/db/actions';
+import  handler from '../../api/getStudents';
+import getStudents from '../../api/getStudents';
+import { addStudent } from '@/db/actions';
+import { handleRemoveStudent } from '@/db/actions';
+import { get } from 'http';
+import { NextApiRequest, NextApiResponse } from 'next';
+
 
 interface Student {
   id: string;
@@ -44,7 +48,10 @@ const Settings: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addStudents({ studentName, surname, studentId, house });
+      await addStudent({
+        studentName, surname, studentId, house,
+        id: ''
+      });
       setStudents(await getStudents()); // Refresh the list
       setStudentName('');
       setSurname('');
@@ -62,7 +69,7 @@ const removeStudentHandler = async (req: { method: string; body: { studentId: an
   if (req.method === 'DELETE') {
     try {
       const { studentId } = req.body;
-      await removeStudent(studentId);
+      await handleRemoveStudent(studentId);
       res.status(200).json({ message: 'Student removed successfully' });
     } catch (error) {
       res.status(500).json({ error: 'Failed to remove student' });
@@ -110,7 +117,7 @@ const removeStudentHandler = async (req: { method: string; body: { studentId: an
         {students.map((student: any) => (
           <ListItem key={student.id}>
             <ListItemText primary={`${student.studentName} ${student.surname}`} secondary={`ID: ${student.studentId}, House: ${student.house}`} />
-            <IconButton edge="end" aria-label="delete" onClick={() => removeStudent(student.id)}>
+            <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveStudent(student.id)}>
               <DeleteIcon />
             </IconButton>
           </ListItem>

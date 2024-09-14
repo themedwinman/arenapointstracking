@@ -7,7 +7,7 @@ export const students = sqliteTable('students', {
   id: integer('id').notNull().primaryKey(),
   name: text('name').notNull(),
   surname: text('surname').notNull(),
-  studentId: text('student_identification').notNull().unique(),
+  studentId: text('student_id').notNull().unique(),
   house: text('house').notNull(),
 });
 

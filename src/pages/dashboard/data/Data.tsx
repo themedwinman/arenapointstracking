@@ -1,155 +1,239 @@
-import React, { useState, useEffect } from 'react';
-import { Paper, Typography, FormControl, TextField, Button, Alert, List, ListItem, ListItemText, IconButton } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
-import { getStudents, addStudent, removeStudent } from './api'; // Ensure these API functions are implemented
-import { useTheme } from '@mui/material/styles'; // Ensure you have the correct import for useTheme
-import Autocomplete from '@mui/material/Autocomplete';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import HouseToggleButton from './HouseToggleButton'; // Ensure you have this component implemented
+import { Grid, Paper, Typography, FormControl, TextField, Button, ToggleButtonGroup, useTheme, Autocomplete, Alert } from "@mui/material";
+import axios from 'axios';
+import Head from "next/head";
+import React, { useState, useEffect } from "react";
+import { houses, houseColours } from "@/helper/Util"; // Assuming houses is an array of house names and houseColors is an array of corresponding colors
+import scss from "./Data.module.scss"; // Assuming you have a CSS module for styling
+import { styled } from '@mui/material/styles';
+import ToggleButton from '@mui/material/ToggleButton';
+import withAuthorization from "@/components/hoc/withAuthorization";
+import getStudents from "@/pages/api/getStudents";
 
 interface Student {
   id: string;
   name: string;
-  surname: string;
-  studentId: string;
-  house: string;
 }
 
-const Data: React.FC = () => {
-  const [studentName, setStudentName] = useState('');
-  const [surname, setSurname] = useState('');
-  const [studentId, setStudentId] = useState('');
-  const [house, setHouse] = useState('');
+// Styled ToggleButton for house selector
+const HouseToggleButton = styled(ToggleButton)(({ theme }) => ({
+  flex: 1,
+  margin: '0.25rem',
+  border: 'none', // No border for the house toggle buttons
+  borderRadius: '4px', // Rounded corners
+  transition: 'transform 0.3s', // Smooth transition for transform
+  color: theme.palette.getContrastText(theme.palette.background.paper), // Contrast text color
+  padding: '0.75rem',
+  '&.Mui-selected': {
+    transform: 'translateY(-5px)', // Lift the button slightly when selected
+      },
+
+}));
+
+// Styled ToggleButton for add/remove points
+const ActionToggleButton = styled(ToggleButton)(({ theme }) => ({
+  flex: 1,
+  margin: '0px',
+  border: `1px solid ${theme.palette.text.primary}`, // Light outline for the toggle buttons
+  borderRadius: '4px', // Rounded corners
+  color: theme.palette.text.primary, // Text color matching the theme
+  padding: '0.75rem',
+  '&.Mui-selected': {
+    borderColor: theme.palette.text.primary, // Change border color when selected
+  },
+}));
+
+const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
+  const theme = useTheme(); // Access the theme
+  const [selectedHouse, setSelectedHouse] = useState<string | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [action, setAction] = useState("add");
+  const [pointsValue, setPoints] = useState(0);
+  const [eventDescription, setEventDescription] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [houses, setHouses] = useState<string[]>(['House1', 'House2', 'House3', 'House4']);
-  const [houseColours, setHouseColours] = useState<string[]>(['#FF0000', '#00FF00', '#0000FF', '#FFFF00']);
-  const theme = useTheme();
 
+  const setPointsValue = (value: number) => {
+    setPoints(value);
+  };
+
+  // Fetch students from the database
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchStudents = async () => {
       try {
-        const students = await getStudents();
-        setStudents(students);
+        const response = await fetch('/api/getStudents');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const student_list: Student[] = await response.json();
+        setStudents(student_list);
+        console.log('Students:', student_list);
       } catch (error) {
+        console.error('Error fetching students:', error);
         setError('Failed to fetch students');
       }
     };
 
-    fetchData();
+    fetchStudents();
   }, []);
 
-  const handleStudentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setStudentName(e.target.value);
-  const handleSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value);
-  const handleStudentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => setStudentId(e.target.value);
-  const handleHouseChange = (e: React.ChangeEvent<HTMLInputElement>) => setHouse(e.target.value);
-  const handleStudentChange = (event: any, newValue: Student | null) => setSelectedStudent(newValue);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await addStudent({ studentName, surname, studentId, house });
-      setStudents(await getStudents()); // Refresh the list
-      setStudentName('');
-      setSurname('');
-      setStudentId('');
-      setHouse('');
-      setError(null);
-    } catch (error) {
-      setError('Failed to add student');
-    }
+  console.log('Students:', students);
+  const handleHouseChange = (event: React.MouseEvent<HTMLElement>, newHouse: string | null) => {
+    setSelectedHouse(newHouse);
   };
 
-  const handleRemoveStudent = async (id: string) => {
+  const handleStudentChange = (event: React.ChangeEvent<{}>, value: Student | null) => {
+    setSelectedStudent(value);
+  };
+
+  const handleActionChange = (event: React.MouseEvent<HTMLElement>, newAction: string | null) => {
+    setAction(newAction || "add");
+  };
+
+  const handlePointsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPointsValue(Number(event.target.value));
+  };
+
+  const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEventDescription(event.target.value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    // Validate form
+    if (pointsValue <= 0) { // Use pointsValue consistently
+      setError("Please enter a valid amount of points.");
+      return;
+    }
+    // Logic to add or remove points from the selected house and student
     try {
-      await removeStudent(id);
-      setStudents(await getStudents()); // Refresh the list
+      const response = await axios.post('/api/addPoints', {
+        selectedHouse,
+        selectedStudent,
+        action,
+        pointsValue, // Use pointsValue consistently
+        eventDescription,
+      });
+      if (response.status === 200) {
+        // Handle successful response
+        console.log('Data added successfully');
+        // Reset form
+        setSelectedHouse(null);
+        setSelectedStudent(null);
+        setAction("add");
+        setPointsValue(0);
+        setEventDescription("");
+        setError(null);
+      }
     } catch (error) {
-      setError('Failed to remove student');
+      setError('Failed to add data');
     }
   };
+  
+  console.log(`House: ${selectedHouse}, Student: ${selectedStudent?.name}, Action: ${action}, Points: ${pointsValue}, Event: ${eventDescription}`);
 
   return (
-    <Paper style={{ padding: '20px', backgroundColor: theme.palette.background.paper }}>
-      <Typography style={{ fontSize: '24px', fontWeight: 'bold', color: theme.palette.text.primary }}>Add Student</Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      <form onSubmit={handleSubmit}>
-        <FormControl style={{ margin: '10px 0' }}>
-          <TextField
-            label="Student Name"
-            value={studentName}
-            onChange={handleStudentNameChange}
-            style={{ color: theme.palette.text.primary }}
-          />
-          <TextField
-            label="Surname"
-            value={surname}
-            onChange={handleSurnameChange}
-            style={{ color: theme.palette.text.primary }}
-          />
-          <TextField
-            label="Student ID"
-            value={studentId}
-            onChange={handleStudentIdChange}
-            style={{ color: theme.palette.text.primary }}
-          />
-          <TextField
-            label="House"
-            value={house}
-            onChange={handleHouseChange}
-            style={{ color: theme.palette.text.primary }}
-          />
-          <Button type="submit" style={{ marginTop: '20px', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>Add Student</Button>
-        </FormControl>
-      </form>
-      <Typography style={{ fontSize: '24px', fontWeight: 'bold', color: theme.palette.text.primary, marginTop: '20px' }}>Current Students</Typography>
-      <List>
-        {students.map((student: any) => (
-          <ListItem key={student.id}>
-            <ListItemText primary={`${student.name} ${student.surname}`} secondary={`ID: ${student.studentId}, House: ${student.house}`} />
-            <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveStudent(student.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
-      <FormControl fullWidth margin="normal">
-        <ToggleButtonGroup>
-          {houses.map((house, index) => (
-            <HouseToggleButton
-              key={house}
-              value={house}
-              style={{
-                backgroundColor: houseColours[index],
-                color: theme.palette.getContrastText(houseColours[index]),
-              }}
-            >
-              {house}
-            </HouseToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        <Autocomplete
-          options={students}
-          getOptionLabel={(option) => option.name}
-          value={selectedStudent}
-          onChange={handleStudentChange}
-          renderInput={(params) => (
+    <>
+      {error && <p>{error}</p>}
+
+      <Head>
+        <title>Edit Points</title>
+        <meta name="description" content="Data" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Grid container justifyContent="flex-start" alignItems="flex-start" className={scss.container}>
+        <Paper className={scss.paper} style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+          <Typography variant="h4" gutterBottom>
+            Welcome to the Points Editor
+          </Typography>
+          <Typography variant="h6" gutterBottom>
+            Manage house points efficiently
+          </Typography>
+          {error && <Alert severity="error">{error}</Alert>}
+          <form onSubmit={handleSubmit}>
+            <FormControl fullWidth margin="normal">
+              <ToggleButtonGroup
+                value={selectedHouse}
+                exclusive
+                onChange={handleHouseChange}
+                aria-label="house"
+                fullWidth
+                className={scss.toggleButtonGroup}
+              >
+                {houses.map((house, index) => (
+                  <HouseToggleButton
+                    key={house}
+                    value={house}
+                    style={{
+                      backgroundColor: houseColours[index],
+                      color: theme.palette.getContrastText(houseColours[index]),
+                    }}
+                  >
+                    {house}
+                  </HouseToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <Autocomplete
+                options={students}
+                getOptionLabel={(option) => option.name}
+                value={selectedStudent}
+                onChange={handleStudentChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Student (Optional)"
+                    variant="outlined"
+                    style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
+                  />
+                )}
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <ToggleButtonGroup
+                value={action}
+                exclusive
+                onChange={handleActionChange}
+                aria-label="action"
+                fullWidth
+                className={scss.actionButtonGroup}
+              >
+                <ActionToggleButton value="add" aria-label="add">
+                  Add Points
+                </ActionToggleButton>
+                <ActionToggleButton value="remove" aria-label="remove">
+                  Remove Points
+                </ActionToggleButton>
+              </ToggleButtonGroup>
+            </FormControl>
             <TextField
-              {...params}
-              label="Select Student (Optional)"
-              variant="outlined"
+              fullWidth
+              margin="normal"
+              label="Points"
+              type="number"
+              value={pointsValue}
+              onChange={handlePointsChange}
+              required
+              className={scss.textField}
               style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
             />
-          )}
-        />
-      </FormControl>
-      <FormControl fullWidth margin="normal">
-        {/* Additional form controls can go here */}
-      </FormControl>
-    </Paper>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Event Description (Optional)"
+              type="text"
+              value={eventDescription}
+              onChange={handleEventDescriptionChange}
+              className={scss.textField}
+              style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
+            />
+            <Button type="submit" variant="contained" color="primary" fullWidth className={scss.submitButton}>
+              Submit
+            </Button>
+          </form>
+        </Paper>
+      </Grid>
+    </>
   );
 };
 

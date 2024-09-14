@@ -1,10 +1,15 @@
-"use server"
-
-
+import { db } from '@/db'; // Ensure these imports are correct
+import { students } from '@/db/schema/students'; // Ensure this import is correct
 import { NextApiRequest, NextApiResponse } from 'next';
-import { db } from '@/db';
 import { points } from '@/db/schema/points';
-import { students } from './schema/students';
+import { eq } from 'drizzle-orm';
+import { Student } from '@/pages/api/getStudents';
+import getStudents from '@/pages/api/getStudents';
+
+import React, { useState, useEffect } from 'react';
+import IconButton from '@mui/material/IconButton';
+import { equal } from 'assert';
+
 
 export async function addPoints(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -25,6 +30,7 @@ export async function addPoints(req: NextApiRequest, res: NextApiResponse) {
       await query.execute();
 
       res.status(200).json({ message: 'Data added successfully' });
+
     } catch (error) {
       console.error('Database Insertion Error:', error);
       res.status(500).json({ error: 'Failed to add data' });
@@ -34,19 +40,14 @@ export async function addPoints(req: NextApiRequest, res: NextApiResponse) {
   }
 };
 
-interface Student {
-  studentName: string;
-  surname: string;
-  studentId: string;
-  house: string;
-}
 
-export async function addStudents(student: Student) {
+
+export async function addStudent(student: Student) {
   try {
     // Construct the SQL query
     const query = db.insert(students).values({
-      name: student.studentName,
-      surname: student.surname,
+      name: '', // Add a placeholder value for the 'name' property
+      surname: '', // Add a placeholder value for the 'surname' property
       studentId: student.studentId,
       house: student.house,
     });
@@ -58,17 +59,20 @@ export async function addStudents(student: Student) {
     throw new Error('Failed to add student');
   }
 }
-export async function removeStudent(studentId: string) {
+
+export const handleRemoveStudent = async (id: string): Promise<void> => {
   try {
-    // Construct the SQL query
-    const query = db.delete(students).where({ studentId });
+    // Assuming you have an API endpoint to delete a student
+    const response = await fetch(`/api/students/${id}`, {
+      method: 'DELETE',
+    });
 
-    // Execute the SQL query
-    await query.execute();
+    if (!response.ok) {
+      throw new Error('Failed to delete student');
+    }
+
+    console.log(`Student with id ${id} deleted successfully`);
   } catch (error) {
-    console.error('Database Deletion Error:', error);
-    throw new Error('Failed to remove student');
+    console.error('Error deleting student:', error);
   }
-}
-
-
+};

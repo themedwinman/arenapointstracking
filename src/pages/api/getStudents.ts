@@ -4,9 +4,9 @@ import { students } from '@/db/schema/students';
 
 export interface Student {
   id: string;
-  studentName: string;
+  name: string;
   surname: string;
-  studentId: string;
+  studentId: number;
   house: string;
 }
 
@@ -15,9 +15,9 @@ const getStudents = async (): Promise<Student[]> => {
     const fetchStudents = await db.select().from(students).execute();
     return fetchStudents.map((student: any) => ({
       id: student.id as string,
-      studentName: student.student_name as string,
+      name: student.student_name as string,
       surname: student.surname as string,
-      studentId: student.student_id as string,
+      studentId: student.student_id as number,
       house: student.house as string,
     }));
   } catch (error) {

@@ -50,7 +50,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   const [pointsValue, setPoints] = useState(0);
   const [eventDescription, setEventDescription] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);;
 
   const setPointsValue = (value: number) => {
     setPoints(value);
@@ -60,7 +60,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/api/getStudents');
+        const response = await fetch('/api/getStudents'); // Ensure the correct API endpoint
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

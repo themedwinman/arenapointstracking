@@ -3,13 +3,24 @@
   margin: 0 auto;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0);
 }
 
 .error {
   color: red;
   margin-bottom: 10px;
 }
+
+
+.paper {
+  padding: 1rem;
+  width: 80%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  border-radius: 8px; /* Rounded corners */
+  margin-right: auto;
+  margin-left: auto;
+}
+
 
 .form {
   display: flex;

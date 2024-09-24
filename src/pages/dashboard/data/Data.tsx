@@ -136,7 +136,6 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
 
   return (
     <>
-      {error && <p>{error}</p>}
 
       <Head>
         <title>Edit Points</title>

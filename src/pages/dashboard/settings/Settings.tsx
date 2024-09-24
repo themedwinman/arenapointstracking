@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { handleRemoveStudent, addStudent } from '@/db/actions';
+import { handleRemoveStudent } from '@/db/actions';
 import { houses, houseColours } from '@/helper/Util';
 import styles from './Settings.module.scss';
-import { TextField, Button, ToggleButton, ToggleButtonGroup, Typography, useTheme, Paper, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
+import { TextField, Button, ToggleButton, ToggleButtonGroup, Typography, useTheme, Paper, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, styled, Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import { useSession } from 'next-auth/react';
+import addStudent from '@/pages/api/addStudents';
 interface Student {
   id: string;
   name: string;
@@ -13,7 +14,13 @@ interface Student {
   house: string;
 }
 
+const ErrorMessage = styled(Typography)(({ theme }) => ({
+  color: theme.palette.error.main,
+  marginBottom: '1rem',
+}));
+
 const Settings: React.FC = () => {
+  const { data: session } = useSession();
   const theme = useTheme();
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -68,16 +75,29 @@ const Settings: React.FC = () => {
     }
 
     try {
-      await addStudent({
-        name, surname, studentId, house,
-        id: ''
+      // Make a POST request to the backend to add the student
+      const response = await fetch('/api/addStudents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name, 
+          surname, 
+          studentId, 
+          house
+        }),
       });
-      const response = await fetch('/api/getStudents');
+    
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const updatedStudents: Student[] = await response.json();
+    
+      // Fetch the updated students list
+      const updatedStudents: Student[] = await fetch('/api/getStudents').then(res => res.json());
       setStudents(updatedStudents); // Refresh the list
+    
+      // Reset form fields
       setName('');
       setSurname('');
       setStudentId('');
@@ -85,29 +105,44 @@ const Settings: React.FC = () => {
       setError(null);
     } catch (error) {
       setError('Failed to add student');
+      console.error('Error adding student:', error);
     }
-  };
+  };    
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (studentId: string) => {
     try {
-      await handleRemoveStudent(id);
-      const response = await fetch('/api/getStudents');
+      const response = await fetch(`/api/deleteStudents`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({ studentId }), // Send studentId in the body
+      });
+  
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        setError(`Failed to delete student: ${response.statusText}`);
       }
-      const updatedStudents: Student[] = await response.json();
+  
+      const updatedStudents: Student[] = await fetch('/api/getStudents').then(res => res.json());
       setStudents(updatedStudents); // Refresh the list
     } catch (error) {
       setError('Failed to delete student');
+      console.error('Error deleting student:', error);
     }
   };
 
   return (
+    <>
+    <Paper elevation={3} className={styles.paper}>
     <div className={styles.settingsContainer}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to the Settings Page
-      </Typography>
-      {error && <Typography color="error">{error}</Typography>}
+    <Typography variant="h4" gutterBottom>
+            Student Configuration Page
+          </Typography>
+          <Typography variant="h6" gutterBottom>
+            This is where you can edit the students stored in the database.
+          </Typography>
+      {error && <Alert severity="error">{error}</Alert>}
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
           <TextField
@@ -184,7 +219,7 @@ const Settings: React.FC = () => {
                   secondary={`ID: ${student.studentId} | House: ${student.house}`}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(student.id)}>
+                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(student.studentId)}>
                     <DeleteIcon />
                   </IconButton>
                 </ListItemSecondaryAction>
@@ -194,6 +229,8 @@ const Settings: React.FC = () => {
         </Paper>
       </div>
     </div>
+    </Paper>
+    </>
   );
 };
 

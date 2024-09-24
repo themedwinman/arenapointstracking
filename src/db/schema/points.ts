@@ -5,7 +5,7 @@ import { students } from "./students";
 export const points = sqliteTable('points', {
   id: integer('id').notNull().primaryKey(),
   associatedHouse: text('associated_house').notNull().unique(),
-  associatedStudent: text('user_id').notNull().unique().references(() => students.id),
+  associatedStudent: text('user_id').notNull().unique().references(() => students.studentId),
   pointsGained: integer('points_gained'),
   pointsLost: integer('points_lost'),
 });

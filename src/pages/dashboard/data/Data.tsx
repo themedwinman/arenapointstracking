@@ -12,6 +12,9 @@ import getStudents from "@/pages/api/getStudents";
 interface Student {
   id: string;
   name: string;
+  surname: string;
+  studentId: string;
+  house: string;
 }
 
 // Styled ToggleButton for house selector
@@ -176,7 +179,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
             <FormControl fullWidth margin="normal">
               <Autocomplete
                 options={students}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) => `${option.name} ${option.surname} | ${option.studentId} | ${option.house}`}
                 value={selectedStudent}
                 onChange={handleStudentChange}
                 renderInput={(params) => (

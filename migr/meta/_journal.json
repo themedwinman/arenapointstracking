@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1725675553944,
+      "tag": "0000_late_polaris",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1725877093635,
+      "tag": "0001_happy_dust",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1725877274051,
+      "tag": "0002_majestic_spitfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1725878082927,
+      "tag": "0003_colorful_luminals",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1726041712126,
+      "tag": "0004_friendly_franklin_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1726391614480,
+      "tag": "0005_soft_husk",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1726392110610,
+      "tag": "0006_dusty_ares",
+      "breakpoints": true
+    }
+  ]
+}

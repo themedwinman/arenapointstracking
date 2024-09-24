@@ -4,5 +4,8 @@
     "prettier.singleQuote": true,
     "prettier.useTabs": true,
     "prettier.jsxSingleQuote": true,
-    "notebook.defaultFormatter": "esbenp.prettier-vscode"
+    "notebook.defaultFormatter": "esbenp.prettier-vscode",
+    "search.exclude": {
+        "**/node_modules": false
+    }
 }

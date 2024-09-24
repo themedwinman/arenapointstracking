@@ -2,8 +2,8 @@ import { Grid, Paper, Typography, FormControl, TextField, Button, ToggleButtonGr
 import axios from 'axios';
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
-import { houses, houseColours } from "@/helper/Util"; // Assuming houses is an array of house names and houseColors is an array of corresponding colors
-import scss from "./Data.module.scss"; // Assuming you have a CSS module for styling
+import { houses, houseColours } from "@/helper/Util";
+import scss from "./Data.module.scss"; 
 import { styled } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
 import withAuthorization from "@/components/hoc/withAuthorization";

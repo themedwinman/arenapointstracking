@@ -1,0 +1,53 @@
+.settingsContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.formGroup {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.formButton {
+  padding: 10px 20px;
+  margin-top: 20px;
+}
+
+.studentList {
+  margin-top: 20px;
+}
+
+.studentList h2 {
+  margin-bottom: 10px;
+}
+
+.studentList ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.studentList li {
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.toggleButton {
+  &:hover {
+    opacity: 0.8;
+  }
+}

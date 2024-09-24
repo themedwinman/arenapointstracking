@@ -1,59 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { Paper, Typography, FormControl, TextField, Button, Alert, List, ListItem, ListItemText, IconButton, useTheme } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
-import  handler from '../../api/getStudents';
-import getStudents from '../../api/getStudents';
-import { addStudent } from '@/db/actions';
-import { handleRemoveStudent } from '@/db/actions';
-import { get } from 'http';
-import { NextApiRequest, NextApiResponse } from 'next';
-
+import React, { useEffect, useState } from 'react';
+import { handleRemoveStudent, addStudent } from '@/db/actions';
+import { houses, houseColours } from '@/helper/Util';
+import styles from './Settings.module.scss';
+import { TextField, Button, ToggleButton, ToggleButtonGroup, Typography, useTheme, Paper, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Student {
   id: string;
-  studentName: string;
+  name: string;
   surname: string;
   studentId: string;
   house: string;
 }
 
-
 const Settings: React.FC = () => {
-  const [studentName, setStudentName] = useState('');
+  const theme = useTheme();
+  const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [studentId, setStudentId] = useState('');
   const [house, setHouse] = useState('');
   const [students, setStudents] = useState<Student[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const theme = useTheme()
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchStudents = async () => {
       try {
-        const students = await getStudents();
-        setStudents(students);
+        const response = await fetch('/api/getStudents'); // Ensure the correct API endpoint
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const student_list: Student[] = await response.json();
+        setStudents(student_list);
+        console.log('Students:', student_list);
       } catch (error) {
+        console.error('Error fetching students:', error);
         setError('Failed to fetch students');
       }
     };
 
-    fetchData();
+    fetchStudents();
   }, []);
 
-  const handleStudentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setStudentName(e.target.value);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
   const handleSurnameChange = (e: React.ChangeEvent<HTMLInputElement>) => setSurname(e.target.value);
-  const handleStudentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => setStudentId(e.target.value);
-  const handleHouseChange = (e: React.ChangeEvent<HTMLInputElement>) => setHouse(e.target.value);
+  const handleStudentIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setStudentId(value);
+    }
+  };
+  const handleHouseChange = (event: React.MouseEvent<HTMLElement>, newHouse: string) => {
+    if (newHouse !== null) {
+      setHouse(newHouse);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name || !surname || !studentId || !house) {
+      setError('All fields are required');
+      return;
+    }
+
+    if (students.some(student => student.studentId === studentId)) {
+      setError('Student ID must be unique');
+      return;
+    }
+
     try {
       await addStudent({
-        studentName, surname, studentId, house,
+        name, surname, studentId, house,
         id: ''
       });
-      setStudents(await getStudents()); // Refresh the list
-      setStudentName('');
+      const response = await fetch('/api/getStudents');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const updatedStudents: Student[] = await response.json();
+      setStudents(updatedStudents); // Refresh the list
+      setName('');
       setSurname('');
       setStudentId('');
       setHouse('');
@@ -63,67 +88,112 @@ const Settings: React.FC = () => {
     }
   };
 
- // api.ts
-
-const removeStudentHandler = async (req: { method: string; body: { studentId: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; json: { (arg0: { message?: string; error?: string; }): void; new(): any; }; }; }) => {
-  if (req.method === 'DELETE') {
+  const handleDelete = async (id: string) => {
     try {
-      const { studentId } = req.body;
-      await handleRemoveStudent(studentId);
-      res.status(200).json({ message: 'Student removed successfully' });
+      await handleRemoveStudent(id);
+      const response = await fetch('/api/getStudents');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const updatedStudents: Student[] = await response.json();
+      setStudents(updatedStudents); // Refresh the list
     } catch (error) {
-      res.status(500).json({ error: 'Failed to remove student' });
+      setError('Failed to delete student');
     }
-  } else {
-    res.status(405).json({ error: 'Method not allowed' });
-  }
-};
+  };
 
   return (
-    <Paper style={{ padding: '20px', backgroundColor: theme.palette.background.paper }}>
-      <Typography style={{ fontSize: '24px', fontWeight: 'bold', color: theme.palette.text.primary }}>Add Student</Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      <form onSubmit={handleSubmit}>
-        <FormControl style={{ margin: '10px 0' }}>
+    <div className={styles.settingsContainer}>
+      <Typography variant="h4" gutterBottom>
+        Welcome to the Settings Page
+      </Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
           <TextField
-            label="Student Name"
-            value={studentName}
-            onChange={handleStudentNameChange}
-            style={{ color: theme.palette.text.primary }}
+            label="Name"
+            value={name}
+            onChange={handleNameChange}
+            fullWidth
+            variant="outlined"
+            margin="normal"
           />
+        </div>
+        <div className={styles.formGroup}>
           <TextField
             label="Surname"
             value={surname}
             onChange={handleSurnameChange}
-            style={{ color: theme.palette.text.primary }}
+            fullWidth
+            variant="outlined"
+            margin="normal"
           />
+        </div>
+        <div className={styles.formGroup}>
           <TextField
             label="Student ID"
             value={studentId}
             onChange={handleStudentIdChange}
-            style={{ color: theme.palette.text.primary }}
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
           />
-          <TextField
-            label="House"
+        </div>
+        <div className={styles.formGroup}>
+          <ToggleButtonGroup
             value={house}
+            exclusive
             onChange={handleHouseChange}
-            style={{ color: theme.palette.text.primary }}
-          />
-          <Button type="submit" style={{ marginTop: '20px', backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText }}>Add Student</Button>
-        </FormControl>
+            aria-label="house"
+            fullWidth
+          >
+            {houses.map((house, index) => (
+              <ToggleButton
+                key={house}
+                value={house}
+                aria-label={house}
+                style={{ backgroundColor: houseColours[index], color: theme.palette.getContrastText(houseColours[index]) }}
+                className={styles.toggleButton} sx={{ 
+                '&.Mui-selected': {
+                  transform: 'translateY(-5px)'
+                 },
+                 transition: "transform 0.3s",
+                 padding: "0.5rem",
+                 }}
+              >
+                {house}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </div>
+        <Button type="submit" variant="contained" color="primary" className={styles.formButton} fullWidth>
+          Add Student
+        </Button>
       </form>
-      <Typography style={{ fontSize: '24px', fontWeight: 'bold', color: theme.palette.text.primary, marginTop: '20px' }}>Current Students</Typography>
-      <List>
-        {students.map((student: any) => (
-          <ListItem key={student.id}>
-            <ListItemText primary={`${student.studentName} ${student.surname}`} secondary={`ID: ${student.studentId}, House: ${student.house}`} />
-            <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveStudent(student.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
-    </Paper>
+      <div className={styles.studentList}>
+        <Typography variant="h6" gutterBottom>
+          Current Students
+        </Typography>
+        <Paper>
+          <List>
+            {students.map(student => (
+              <ListItem key={student.id}>
+                <ListItemText
+                  primary={`${student.name} ${student.surname}`}
+                  secondary={`ID: ${student.studentId} | House: ${student.house}`}
+                />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(student.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      </div>
+    </div>
   );
 };
 

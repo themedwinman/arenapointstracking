@@ -2,6 +2,8 @@ import React, { useState, useEffect, Key } from 'react';
 import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButton, ToggleButtonGroup, ListItemText, ListItemSecondaryAction, IconButton, useTheme, Fade } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './Settings.module.scss';
+import { Modal, Box } from '@mui/material';
+
 
 
 const Settings = () => {
@@ -191,7 +193,60 @@ const Settings = () => {
     }
   };
 
-  return (
+
+// Add these state variables
+const [isModalOpen, setIsModalOpen] = useState(false);
+const [houseToDelete, setHouseToDelete] = useState<string | null>(null);
+
+const handleOpenModal = (houseName: string) => {
+  setHouseToDelete(houseName);
+  setIsModalOpen(true);
+};
+
+const handleCloseModal = () => {
+  setIsModalOpen(false);
+  setHouseToDelete(null);
+};
+
+const handleConfirmDelete = async () => {
+  if (houseToDelete) {
+    try {
+      const response = await fetch(`/api/deleteHouses`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify({ houseName: houseToDelete }), // Send houseName in the body
+      });
+
+      if (!response.ok) {
+        setError(`Failed to delete house: ${response.statusText}`);
+        return;
+      }
+
+      const updatedHouses: House[] = await fetch('/api/getHouses').then(res => res.json());
+      setHouses(updatedHouses); // Refresh the list
+
+      const updatedStudents: Student[] = await fetch('/api/getStudents').then(res => res.json());
+      setStudents(updatedStudents); // Refresh the list of students
+
+      handleCloseModal();
+    } catch (error) {
+      setError('Failed to delete house');
+      console.error('Error deleting house:', error);
+    }
+  }
+};
+
+// Update the handleDeleteHouse function to open the modal
+const handleDeleteHouse = (houseName: string) => {
+  handleOpenModal(houseName);
+};
+
+// Add the Modal component
+return (
+  <>
     <Paper elevation={3} className={styles.paper}>
       <div className={styles.settingsContainer}>
       <Typography variant="h4" gutterBottom>
@@ -379,7 +434,7 @@ const Settings = () => {
                       primary={`${house.houseName}`}
                     />
                     <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(house.houseName)}>
+                      <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteHouse(house.houseName)}>
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -394,8 +449,27 @@ const Settings = () => {
         </Fade>
       </div>
     </Paper>
-    
-  );
+    <Modal
+      open={isModalOpen}
+      onClose={handleCloseModal}
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <Box sx={{ p: 4, backgroundColor: 'white', borderRadius: 1, boxShadow: 24 }}>
+        <Typography id="modal-title" variant="h6" component="h2">
+          Confirm Delete
+        </Typography>
+        <Typography id="modal-description" sx={{ mt: 2 }}>
+          Are you sure you want to delete this house? This will also delete all students in this house.
+        </Typography>
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={handleCloseModal} sx={{ mr: 2 }}>Cancel</Button>
+          <Button onClick={handleConfirmDelete} variant="contained" color="error">Delete</Button>
+        </Box>
+      </Box>
+    </Modal>
+  </>
+);
 };
 
 export default Settings;

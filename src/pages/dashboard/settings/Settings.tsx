@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButton, ToggleButtonGroup, ListItemText, ListItemSecondaryAction, IconButton, useTheme } from '@mui/material';
+import React, { useState, useEffect, Key } from 'react';
+import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButton, ToggleButtonGroup, ListItemText, ListItemSecondaryAction, IconButton, useTheme, Fade } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import getHouses from '../../api/getHouses';
 import addHouse from '../../api/addHouses';
 import styles from './Settings.module.scss';
-import { houseColours } from '@/helper/Util';
+
 
 const Settings = () => {
   const theme = useTheme();
@@ -14,6 +14,30 @@ const Settings = () => {
   const [studentId, setStudentId] = useState('');
   const [house, setHouse] = useState('');
   const [error, setError] = useState<string | null>('');
+  const [newHouseName, setNewHouseName] = useState('');
+  const [newHouseColor, setNewHouseColor] = useState('#000000'); // Default color
+
+const handleAddHouse = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const response = await fetch('/api/addHouses', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      newHouseName, 
+      newHouseColor, 
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+
+  // Fetch the updated students list
+  const updatedHouses: House[] = await fetch('/api/getHouses').then(res => res.json());
+  setHouses(updatedHouses); //refresh houses list.
+};
   interface Student {
     id: Key | null | undefined;
     name: string;
@@ -124,17 +148,17 @@ const Settings = () => {
     }
   };
 
-  const handleAddHouse = async (e: React.FormEvent) => {
-      e.preventDefault();
-      const newHouse = prompt('Enter new house name:');
-      if (newHouse && !houses.some(h => h.houseName === newHouse)) {
-        try {
-          setHouses([...houses, { id: `${houses.length + 1}`, houseName: newHouse, houseColour: '#000000', houseTotalPoints: 0 }]); // Example default values
-        } catch (error) {
-          console.error('Error adding house:', error);
-        }
-      }
-    };
+  // const handleAddHouse = async (e: React.FormEvent) => {
+  //     e.preventDefault();
+  //     const newHouse = prompt('Enter new house name:');
+  //     if (newHouse && !houses.some(h => h.houseName === newHouse)) {
+  //       try {
+  //         setHouses([...houses, { id: `${houses.length + 1}`, houseName: newHouse, houseColour: '#000000', houseTotalPoints: 0 }]); // Example default values
+  //       } catch (error) {
+  //         console.error('Error adding house:', error);
+  //       }
+  //     }
+  //   };
 
   const handleRemoveHouse = (houseToRemove: string) => {
     setHouses(houses.filter(h => h.houseName !== houseToRemove));
@@ -166,92 +190,112 @@ const Settings = () => {
   return (
     <Paper elevation={3} className={styles.paper}>
       <div className={styles.settingsContainer}>
-        <Typography variant="h4" gutterBottom>
-          Configuration Page
-        </Typography>
-        <div>
-          <Button  onClick={() => setActiveTab('students')} className={styles.tabButton} sx={{
-              '&.Mui-selected': {
-              backgroundColor: theme.palette.secondary.main, 
-              color: theme.palette.secondary.contrastText
-              },
-            }}>
-              Students
-              </Button>
-          <Button onClick={() => setActiveTab('houses')} className={styles.tabButton} sx={{
-             '&.Mui-selected': {
-              backgroundColor: theme.palette.secondary.main, 
-              color: theme.palette.secondary.contrastText
-             },
-             }}>
-              Houses
-              </Button>
-        </div>
-
+      <Typography variant="h4" gutterBottom>
+        Configuration Page
+      </Typography>
+      <div>
+        <Button
+          onClick={() => setActiveTab('students')}
+          className={styles.tabButton}
+          sx={{
+            backgroundColor: activeTab === 'students' ? theme.palette.primary.main : 'transparent',
+            color: activeTab === 'students' ? theme.palette.getContrastText(theme.palette.primary.main) : theme.palette.text.primary,
+            transition: 'background-color 0.3s, color 0.3s',
+            '&:hover': {
+              backgroundColor: theme.palette.primary.light,
+              transform: "0.3s",
+            },
+          }}
+        >
+          Students
+        </Button>
+        <Button
+          onClick={() => setActiveTab('houses')}
+          className={styles.tabButton}
+          sx={{
+            backgroundColor: activeTab === 'houses' ? theme.palette.primary.main : 'transparent',
+            color: activeTab === 'houses' ? theme.palette.getContrastText(theme.palette.primary.main) : theme.palette.text.primary,
+            transition: 'background-color 0.3s, color 0.3s',
+            '&:hover': {
+              backgroundColor: theme.palette.primary.light,
+              transform: "0.3s",
+            },
+          }}
+        >
+          Houses
+        </Button>
+      </div>
+      <Fade in={activeTab === 'students'} timeout={500}>
+        <div style={{ display: activeTab === 'students' ? 'block' : 'none' }}>
         {activeTab === 'students' && (
           <>
-            <Typography variant="h6" gutterBottom>
-              This is where you can edit the students stored in the database.
-            </Typography>
             {error && <Alert severity="error">{error}</Alert>}
+            <Typography variant="h6" gutterBottom>
+              Manage Students
+              </Typography>
             <form onSubmit={handleSubmit} className={styles.form}>
-              <div className={styles.formGroup}>
-                <TextField
-                  label="Name"
-                  value={name}
-                  onChange={handleNameChange}
-                  fullWidth
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <TextField
-                  label="Surname"
-                  value={surname}
-                  onChange={handleSurnameChange}
-                  fullWidth
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <TextField
-                  label="Student ID"
-                  value={studentId}
-                  onChange={handleStudentIdChange}
-                  fullWidth
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <ToggleButtonGroup
-                  value={house}
-                  exclusive
-                  onChange={handleHouseChange}
-                  aria-label="house"
-                  fullWidth
-                >
-                  {houses.map((house, index) => (
-                    <ToggleButton
-                      key={house.id}
-                      value={house.houseName}
-                      style={{ backgroundColor: house.houseColour, color: theme.palette.getContrastText(house.houseColour) }}
-                      className={styles.toggleButton}
-                      sx={{
-                        '&.Mui-selected': {
-                          transform: 'translateY(-5px)'
-                        },
-                        transition: "transform 0.3s",
-                        padding: "0.5rem",
-                        flex: 1,
-                        
-                      }}
-                    >
-                      {house.houseName}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              </div>
-              <Button type="submit" variant="contained" color="primary" className={styles.formButton} fullWidth>
-                Add Student
-              </Button>
-            </form>
+        <div className={styles.formGroup}>
+          <TextField
+            label="Name"
+            value={name}
+            onChange={handleNameChange}
+            fullWidth
+            variant="outlined"
+            margin="normal"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <TextField
+            label="Surname"
+            value={surname}
+            onChange={handleSurnameChange}
+            fullWidth
+            variant="outlined"
+            margin="normal"
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <TextField
+            label="Student ID"
+            value={studentId}
+            onChange={handleStudentIdChange}
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          />
+        </div>
+        <div className={styles.formGroupToggle}>
+          <ToggleButtonGroup
+            value={house}
+            exclusive
+            onChange={handleHouseChange}
+            aria-label="house"
+            fullWidth
+          >
+            {houses.map((house, index) => (
+              <ToggleButton
+                key={house.id}
+                value={house.houseName}
+                aria-label={house.houseName}
+                style={{ backgroundColor: house.houseColour, color: theme.palette.getContrastText(house.houseColour) }}
+                className={styles.toggleButton} sx={{ 
+                '&.Mui-selected': {
+                  transform: 'translateY(-5px)'
+                 },
+                 transition: "transform 0.3s",
+                 padding: "0.5rem",
+                 }}
+              >
+                {house.houseName}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </div>
+        <Button type="submit" variant="contained" color="primary" className={styles.formButton} fullWidth>
+          Add Student
+        </Button>
+      </form>
             <div className={styles.studentList}>
             <Typography variant="h6" gutterBottom>
           Current Students
@@ -272,30 +316,69 @@ const Settings = () => {
               </ListItem>
             ))}
           </List>
+          
+          
+          
         </Paper>
-            </div>
+        
+      </div>
           </>
         )}
-
+        </div>
+        </Fade>
+        <Fade in={activeTab === 'houses'} timeout={500}>
+        <div style={{ display: activeTab === 'houses' ? 'block' : 'none' }}>
         {activeTab === 'houses' && (
           <>
             <Typography variant="h6" gutterBottom>
-              This is where you can manage the houses.
-            </Typography>
-            <Button onClick={handleAddHouse} variant="contained" color="primary">
-              Add House
-            </Button>
-            <ul>
-              {houses.map(h => (
-                <li key={h.id}>
-                  {h.houseName} <Button onClick={() => handleRemoveHouse(h.houseName)}>Remove</Button>
-                </li>
-              ))}
-            </ul>
+              Manage Houses
+              </Typography>
+            <form onSubmit={handleAddHouse}>
+              <TextField
+                label="House Name"
+                className={styles.houseNameInput}
+                value={newHouseName}
+                onChange={(e) => setNewHouseName(e.target.value)}
+                fullWidth
+              />
+              <TextField
+                label="House Color"
+                type="color"
+                className={styles.colorInput}
+                value={newHouseColor}
+                onChange={(e) => setNewHouseColor(e.target.value)}
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+              />
+              <Button type="submit" variant="contained" color="primary" className={styles.addHouseButton}>
+                Add House
+              </Button>
+            </form>
+            <div className={styles.studentList}>
+            <Typography variant="h6" gutterBottom>
+              Current Houses:
+              </Typography>
+              <List>
+            {houses.map(house => (
+              <ListItem key={house.id}>
+                <ListItemText
+                  primary={`${house.houseName}`}/>
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(house.houseName)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+            </div>
           </>
         )}
+        </div>
+        </Fade>
       </div>
     </Paper>
+    
   );
 };
 

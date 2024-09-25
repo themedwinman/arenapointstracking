@@ -105,7 +105,10 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
       setError("Please select a house.");
       return;
     }
-    // Logic to add or remove points from the selected house and student
+    if (action === null) {
+      setError("Please select a points action.");
+      return;
+    }
     try {
       const response = await axios.post('/api/addPoints', {
         selectedHouse,
@@ -162,7 +165,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
             <FormControl fullWidth margin="normal">
               <Autocomplete
                 options={students}
-                getOptionLabel={(option) => `${option.name} ${option.surname} | ID:${option.studentId} | ${option.house}`}
+                getOptionLabel={(option) => `${option.name} ${option.surname} | ID: ${option.studentId} | ${option.house}`}
                 renderInput={(params) => <TextField {...params} label="Select Student (Optional)" variant="outlined" />}
                 onChange={(event, newValue) => setSelectedStudent(newValue)}
               />

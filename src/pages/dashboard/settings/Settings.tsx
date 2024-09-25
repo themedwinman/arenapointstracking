@@ -310,6 +310,7 @@ const Settings = () => {
           <List>
             {students.map(student => (
               <ListItem key={student.id}>
+                <div style={{ width: '20px', height: '20px', backgroundColor: houses.find(h => h.houseName === student.house)?.houseColour || '#000', marginRight: '10px' }}></div>
                 <ListItemText
                   primary={`${student.name} ${student.surname}`}
                   secondary={`ID: ${student.studentId} | House: ${student.house}`}

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, Key } from 'react';
 import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButton, ToggleButtonGroup, ListItemText, ListItemSecondaryAction, IconButton, useTheme, Fade } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import getHouses from '../../api/getHouses';
-import addHouse from '../../api/addHouses';
 import styles from './Settings.module.scss';
 
 
@@ -17,27 +15,49 @@ const Settings = () => {
   const [newHouseName, setNewHouseName] = useState('');
   const [newHouseColor, setNewHouseColor] = useState('#000000'); // Default color
 
-const handleAddHouse = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const response = await fetch('/api/addHouses', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      newHouseName, 
-      newHouseColor, 
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-
-  // Fetch the updated students list
-  const updatedHouses: House[] = await fetch('/api/getHouses').then(res => res.json());
-  setHouses(updatedHouses); //refresh houses list.
-};
+  const handleAddHouse = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // Check if house name is empty
+    if (!newHouseName.trim()) {
+      setError('House name cannot be empty');
+      return;
+    }
+  
+    // Check if house color is unique
+    const houseColors: string[] = houses.map(h => h.houseColour);
+    if (houseColors.includes(newHouseColor)) {
+      setError('House color must be unique');
+      return;
+    }
+  
+    try {
+      const response = await fetch('/api/addHouses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          houseName: newHouseName, 
+          houseColour: newHouseColor, 
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      // Fetch the updated houses list
+      const updatedHouses = await fetch('/api/getHouses').then(res => res.json());
+      setHouses(updatedHouses); // Refresh the list
+      setNewHouseName('');
+      setNewHouseColor('#000000'); // Reset to default color
+      setError(null);
+    } catch (error) {
+      setError('Failed to add house');
+      console.error('Error adding house:', error);
+    }
+  };
   interface Student {
     id: Key | null | undefined;
     name: string;
@@ -148,22 +168,6 @@ const handleAddHouse = async (e: React.FormEvent) => {
     }
   };
 
-  // const handleAddHouse = async (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     const newHouse = prompt('Enter new house name:');
-  //     if (newHouse && !houses.some(h => h.houseName === newHouse)) {
-  //       try {
-  //         setHouses([...houses, { id: `${houses.length + 1}`, houseName: newHouse, houseColour: '#000000', houseTotalPoints: 0 }]); // Example default values
-  //       } catch (error) {
-  //         console.error('Error adding house:', error);
-  //       }
-  //     }
-  //   };
-
-  const handleRemoveHouse = (houseToRemove: string) => {
-    setHouses(houses.filter(h => h.houseName !== houseToRemove));
-  };
-
   const handleDelete = async (studentId: string) => {
     try {
       const response = await fetch(`/api/deleteStudents`, {
@@ -193,7 +197,9 @@ const handleAddHouse = async (e: React.FormEvent) => {
       <Typography variant="h4" gutterBottom>
         Configuration Page
       </Typography>
-      <div>
+      {error && <Alert severity="error">{error}</Alert>}
+
+      <div style={{marginTop: "20px"}}>
         <Button
           onClick={() => setActiveTab('students')}
           className={styles.tabButton}
@@ -225,11 +231,11 @@ const handleAddHouse = async (e: React.FormEvent) => {
           Houses
         </Button>
       </div>
+      
       <Fade in={activeTab === 'students'} timeout={500}>
         <div style={{ display: activeTab === 'students' ? 'block' : 'none' }}>
         {activeTab === 'students' && (
           <>
-            {error && <Alert severity="error">{error}</Alert>}
             <Typography variant="h6" gutterBottom>
               Manage Students
               </Typography>
@@ -334,13 +340,17 @@ const handleAddHouse = async (e: React.FormEvent) => {
               Manage Houses
               </Typography>
             <form onSubmit={handleAddHouse}>
+            <div className={styles.formGroupHouse}>
               <TextField
                 label="House Name"
-                className={styles.houseNameInput}
                 value={newHouseName}
-                onChange={(e) => setNewHouseName(e.target.value)}
+                onChange={(e) => setNewHouseName(e.target.value)}                
                 fullWidth
-              />
+                variant="outlined"
+                margin="normal"
+                />
+            </div>
+            <div className={styles.formGroupHouseColour}>
               <TextField
                 label="House Color"
                 type="color"
@@ -350,6 +360,7 @@ const handleAddHouse = async (e: React.FormEvent) => {
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
               />
+              </div>
               <Button type="submit" variant="contained" color="primary" className={styles.addHouseButton}>
                 Add House
               </Button>
@@ -357,20 +368,24 @@ const handleAddHouse = async (e: React.FormEvent) => {
             <div className={styles.studentList}>
             <Typography variant="h6" gutterBottom>
               Current Houses:
-              </Typography>
+            </Typography>
+            <Paper>
               <List>
-            {houses.map(house => (
-              <ListItem key={house.id}>
-                <ListItemText
-                  primary={`${house.houseName}`}/>
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(house.houseName)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
+                {houses.map(house => (
+                  <ListItem key={house.id}>
+                    <div style={{ width: '20px', height: '20px', backgroundColor: house.houseColour, marginRight: '10px' }}></div>
+                    <ListItemText
+                      primary={`${house.houseName}`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(house.houseName)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
             </div>
           </>
         )}
@@ -383,3 +398,14 @@ const handleAddHouse = async (e: React.FormEvent) => {
 };
 
 export default Settings;
+
+
+
+// <TextField
+// label="House Name"
+// InputLabelProps={{  }}
+// className={styles.houseNameInput}
+// value={newHouseName}
+// onChange={(e) => setNewHouseName(e.target.value)}
+// fullWidth
+// />

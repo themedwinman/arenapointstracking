@@ -1,5 +1,5 @@
 .settingsContainer {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   border-radius: 8px;
@@ -14,7 +14,7 @@
 
 .paper {
   padding: 1rem;
-  width: 80%;
+  width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   border-radius: 8px; /* Rounded corners */
   margin-right: auto;
@@ -56,7 +56,24 @@
   // border: 1px solid #ccc;
   margin-top: 10px;
   margin-right: auto;
+  // display: flex;
+  justify-content: center;
 }
+.formGroupHouse {
+  display: flex;
+  flex-direction: column;
+  width: 79%;
+  margin-top: 20px;
+  float: left;
+}
+
+.formGroupHouseColour {
+  display: flex;
+  flex-direction: column;
+  width: 19%;
+  margin-top: 20px;
+  float: right;
+};
 
 .addHouseButton {
   padding: 10px 20px;
@@ -64,15 +81,6 @@
   width: 100%;
   // margin-right: auto;
   // margin-left: auto;
-}
-
-.colorInput {
-  width: 15%;
-  padding: 10px;
-  border-radius: 8px;
-  // border: 1px solid #ccc;
-  margin-top: 10px;
-  // margin-right: auto;
 }
 
 .formButton {

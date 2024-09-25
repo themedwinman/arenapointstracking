@@ -2,7 +2,6 @@ import { Grid, Paper, Typography, FormControl, TextField, Button, ToggleButtonGr
 import axios from 'axios';
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
-import { houses, houseColours } from "@/helper/Util";
 import scss from "./Data.module.scss"; 
 import { styled } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -17,6 +16,12 @@ interface Student {
   house: string;
 }
 
+interface House {
+  id: string;
+  houseName: string;
+  houseColour: string;
+}
+
 // Styled ToggleButton for house selector
 const HouseToggleButton = styled(ToggleButton)(({ theme }) => ({
   flex: 1,
@@ -24,12 +29,10 @@ const HouseToggleButton = styled(ToggleButton)(({ theme }) => ({
   border: 'none', // No border for the house toggle buttons
   borderRadius: '4px', // Rounded corners
   transition: 'transform 0.3s', // Smooth transition for transform
-  color: theme.palette.getContrastText(theme.palette.background.paper), // Contrast text color
   padding: '0.75rem',
   '&.Mui-selected': {
     transform: 'translateY(-5px)', // Lift the button slightly when selected
-      },
-
+  },
 }));
 
 // Styled ToggleButton for add/remove points
@@ -53,7 +56,8 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   const [pointsValue, setPoints] = useState(0);
   const [eventDescription, setEventDescription] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
-  const [error, setError] = useState<string | null>(null);;
+  const [houses, setHouses] = useState<House[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const setPointsValue = (value: number) => {
     setPoints(value);
@@ -63,48 +67,42 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/api/getStudents'); // Ensure the correct API endpoint
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const student_list: Student[] = await response.json();
-        setStudents(student_list);
-        console.log('Students:', student_list);
+        const response = await fetch('/api/getStudents');
+        const data = await response.json();
+        setStudents(data);
       } catch (error) {
-        console.error('Error fetching students:', error);
-        setError('Failed to fetch students');
+        setError("Failed to fetch students");
       }
     };
 
     fetchStudents();
   }, []);
 
-  console.log('Students:', students);
-  const handleHouseChange = (event: React.MouseEvent<HTMLElement>, newHouse: string | null) => {
-    setSelectedHouse(newHouse);
-  };
+  // Fetch houses from the database
+  useEffect(() => {
+    const fetchHouses = async () => {
+      try {
+        const response = await fetch('/api/getHouses');
+        const data = await response.json();
+        console.log("Fetched houses:", data); // Debug log
+        setHouses(data);
+      } catch (error) {
+        setError("Failed to fetch houses");
+      }
+    };
 
-  const handleStudentChange = (event: React.ChangeEvent<{}>, value: Student | null) => {
-    setSelectedStudent(value);
-  };
-
-  const handleActionChange = (event: React.MouseEvent<HTMLElement>, newAction: string | null) => {
-    setAction(newAction || "add");
-  };
-
-  const handlePointsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPointsValue(Number(event.target.value));
-  };
-
-  const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEventDescription(event.target.value);
-  };
+    fetchHouses();
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     // Validate form
     if (pointsValue <= 0) { // Use pointsValue consistently
       setError("Please enter a valid amount of points.");
+      return;
+    }
+    else if (selectedHouse === null) {
+      setError("Please select a house.");
       return;
     }
     // Logic to add or remove points from the selected house and student
@@ -131,46 +129,32 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
       setError('Failed to add data');
     }
   };
-  
-  console.log(`House: ${selectedHouse}, Student: ${selectedStudent?.name}, Action: ${action}, Points: ${pointsValue}, Event: ${eventDescription}`);
 
   return (
-    <>
-
+    <div>
       <Head>
-        <title>Edit Points</title>
-        <meta name="description" content="Data" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Points Editor</title>
       </Head>
-      <Grid container justifyContent="flex-start" alignItems="flex-start" className={scss.container}>
-        <Paper className={scss.paper} style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
-          <Typography variant="h4" gutterBottom>
-            Welcome to the Points Editor
-          </Typography>
-          <Typography variant="h6" gutterBottom>
-            Manage house points efficiently
-          </Typography>
-          {error && <Alert severity="error">{error}</Alert>}
-          <form onSubmit={handleSubmit}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper className={scss.paper}>
+            <Typography variant="h4" gutterBottom>
+              Points Editor           
+            </Typography>
+            {error && <Alert severity="error">{error}</Alert>}
             <FormControl fullWidth margin="normal">
               <ToggleButtonGroup
                 value={selectedHouse}
                 exclusive
-                onChange={handleHouseChange}
-                aria-label="house"
-                fullWidth
-                className={scss.toggleButtonGroup}
+                onChange={(event, newHouse) => setSelectedHouse(newHouse)}
+                aria-label="house selection"
               >
-                {houses.map((house, index) => (
-                  <HouseToggleButton
-                    key={house}
-                    value={house}
-                    style={{
-                      backgroundColor: houseColours[index],
-                      color: theme.palette.getContrastText(houseColours[index]),
-                    }}
-                  >
-                    {house}
+                {houses.map((house) => (
+                  <HouseToggleButton key={house.id} value={house.houseName} style={{ backgroundColor: house.houseColour,
+                    color: theme.palette.getContrastText(house.houseColour), // Contrast text color
+
+                   }}>
+                    {house.houseName}
                   </HouseToggleButton>
                 ))}
               </ToggleButtonGroup>
@@ -178,64 +162,46 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
             <FormControl fullWidth margin="normal">
               <Autocomplete
                 options={students}
-                getOptionLabel={(option) => `${option.name} ${option.surname} | ${option.studentId} | ${option.house}`}
-                value={selectedStudent}
-                onChange={handleStudentChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select Student (Optional)"
-                    variant="outlined"
-                    style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
-                  />
-                )}
+                getOptionLabel={(option) => `${option.name} ${option.surname} | ID:${option.studentId} | ${option.house}`}
+                renderInput={(params) => <TextField {...params} label="Select Student (Optional)" variant="outlined" />}
+                onChange={(event, newValue) => setSelectedStudent(newValue)}
               />
             </FormControl>
             <FormControl fullWidth margin="normal">
               <ToggleButtonGroup
                 value={action}
                 exclusive
-                onChange={handleActionChange}
-                aria-label="action"
-                fullWidth
-                className={scss.actionButtonGroup}
+                onChange={(event, newAction) => setAction(newAction)}
+                aria-label="action selection"
               >
-                <ActionToggleButton value="add" aria-label="add">
-                  Add Points
-                </ActionToggleButton>
-                <ActionToggleButton value="remove" aria-label="remove">
-                  Remove Points
-                </ActionToggleButton>
+                <ActionToggleButton value="add">Add Points</ActionToggleButton>
+                <ActionToggleButton value="remove">Remove Points</ActionToggleButton>
               </ToggleButtonGroup>
             </FormControl>
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Points"
-              type="number"
-              value={pointsValue}
-              onChange={handlePointsChange}
-              required
-              className={scss.textField}
-              style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Event Description (Optional)"
-              type="text"
-              value={eventDescription}
-              onChange={handleEventDescriptionChange}
-              className={scss.textField}
-              style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
-            />
-            <Button type="submit" variant="contained" color="primary" fullWidth className={scss.submitButton}>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Points"
+                type="number"
+                value={pointsValue}
+                onChange={(e) => setPointsValue(parseInt(e.target.value))}
+                variant="outlined"
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Event Description (Optional)"
+                value={eventDescription}
+                onChange={(e) => setEventDescription(e.target.value)}
+                variant="outlined"
+              />
+            </FormControl>
+            <Button type="submit" variant="contained" color="primary" onClick={(event) => handleSubmit(event)} fullWidth className={scss.submitButton}>
               Submit
             </Button>
-          </form>
-        </Paper>
+          </Paper>
+        </Grid>
       </Grid>
-    </>
+    </div>
   );
 };
 

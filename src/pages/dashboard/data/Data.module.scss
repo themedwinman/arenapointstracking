@@ -49,13 +49,13 @@
     margin-top: 2rem;
     padding: 0.75rem;
     font-size: 1rem;
-    background-color: #1976d2; /* Primary color for the submit button */
-    color: #ffffff; /* White text for the submit button */
-    transition: background-color 0.3s; /* Smooth transition for background color */
+    // background-color: #1976d2; /* Primary color for the submit button */
+    // color: #ffffff; /* White text for the submit button */
+    transition: 0.3s; /* Smooth transition for background color */
   }
   
   .submitButton:hover {
-    background-color: #115293; /* Darker shade for hover state */
+    opacity: 0.8; /* Darker shade for hover state */
   }
   
   .actionButtonGroup {

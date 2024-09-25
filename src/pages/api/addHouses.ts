@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '@/db';
 import { houses } from '@/db/schema/houses';
-
 interface HouseData {
   houseName: string;
   houseColour: string;
@@ -10,36 +9,51 @@ interface HouseData {
 
 async function addHouse(house: HouseData) {
   try {
-    const query = db.insert(houses).values({
+    // Add some logging to debug the incoming data
+    console.log('Inserting house:', house);
+    
+    // Insert data into the 'houses' table, auto-increment ID
+    await db.insert(houses).values({
       houseName: house.houseName,
       houseColour: house.houseColour,
       houseTotalPoints: house.houseTotalPoints,
     });
-
-    await query.run();
+    
+    console.log('House inserted successfully');
   } catch (error) {
+    // Log detailed error information
     console.error('Database Insertion Error:', error);
     throw new Error('Failed to add house');
   }
 };
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse) {
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { houseName, houseColour, houseTotalPoints } = req.body;
+    const { houseName, houseColour } = req.body;
 
     try {
+      // Log request body for debugging
+      console.log('Request body:', req.body);
+      console.log('House name:', houseName);
+      console.log('House colour:', houseColour);
+
+      // Call the addHouse function with request data
       await addHouse({
         houseName,
         houseColour,
-        houseTotalPoints,
+        houseTotalPoints: 0,
       });
 
+      // Send a success response
       return res.status(200).json({ message: 'House added successfully' });
     } catch (error) {
+      // Log the error to debug it better
       console.error('Error adding house:', error);
       return res.status(500).json({ error: 'Failed to add house' });
     }
   } else {
+    // Handle methods other than POST
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }

@@ -4,7 +4,6 @@ export const houses = [
     "Darby",
     "Youngman",
     "Nationalistic Party",
-    "Noah House",
   ];
 
 export const houseColours = [
@@ -13,7 +12,6 @@ export const houseColours = [
     "#00ff00",
     "#ffff00",
     "#ff00ff",
-    "#00ffff"
 ];
 
 

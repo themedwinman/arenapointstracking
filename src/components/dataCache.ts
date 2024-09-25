@@ -4,9 +4,9 @@ import { houseColours } from "@/helper/Util";
 import { GetServerSideProps } from "next";
 import { getServerSideProps } from "@/pages";
 
-export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000, 3000, 8000]
+export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000, 3000]
 
-export const PointsLostArray: Array<number> = [200, 1200, 400, 750, 0, 1000]
+export const PointsLostArray: Array<number> = [200, 1200, 400, 750, 0]
 
 export const TotalPointsArray = houses.map((house, index) => { return (PointsGainedArray[index]??0) - (PointsLostArray[index]??0) });
 

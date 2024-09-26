@@ -1,6 +1,3 @@
-
-
-// Import Drizzle ORM methods and types
 import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { students } from '@/db/schema/students';
@@ -18,9 +15,13 @@ export default async function deleteStudents(req: NextApiRequest, res: NextApiRe
     return res.status(400).json({ error: 'Missing studentId' });
   }
 
+  console.log(`Received request to delete student with ID: ${studentId}`);
+
   try {
     // Use Drizzle ORM to delete the student where the student ID matches
-    await db.delete(students).where(eq(students.studentId, studentId));
+    const result = await db.delete(students).where(eq(students.id, studentId)).execute();
+
+    console.log(`Delete result: ${JSON.stringify(result)}`);
 
     // Return a success response
     return res.status(200).json({ message: 'Student deleted successfully' });

@@ -16,6 +16,51 @@ const Settings = () => {
   const [error, setError] = useState<string | null>('');
   const [newHouseName, setNewHouseName] = useState('');
   const [newHouseColor, setNewHouseColor] = useState('#000000'); // Default color
+  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<{ id: string, name: string } | null>(null);
+  
+  // Function to handle opening the student deletion modal
+  const handleOpenStudentModal = (student: { id: string, name: string }) => {
+    setStudentToDelete(student);
+    setIsStudentModalOpen(true);
+  };
+  
+  // Function to handle closing the student deletion modal
+  const handleCloseStudentModal = () => {
+    setStudentToDelete(null);
+    setIsStudentModalOpen(false);
+  };
+  
+  // Function to handle confirming student deletion
+  const handleConfirmStudentDelete = async () => {
+    if (studentToDelete) {
+      try {
+        const response = await fetch(`/api/deleteStudents`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
+          },
+          body: JSON.stringify({ studentId: studentToDelete.id }), // Send studentId in the body
+        });
+  
+        if (!response.ok) {
+          const errorText = await response.text();
+          setError(`Failed to delete student: ${errorText}`);
+          console.error(`Failed to delete student: ${errorText}`);
+          return;
+        }
+  
+        const updatedStudents: Student[] = await fetch('/api/getStudents').then(res => res.json());
+        setStudents(updatedStudents); // Refresh the list
+      } catch (error) {
+        setError('Failed to delete student');
+        console.error('Error deleting student:', error);
+      }
+      console.log(`Deleting student with ID: ${studentToDelete.id}`);
+    }
+    handleCloseStudentModal();
+  };
 
   const handleAddHouse = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,11 +106,11 @@ const Settings = () => {
     }
   };
   interface Student {
-    id: Key | null | undefined;
-    name: string;
-    surname: string;
-    studentId: string;
-    house: string;
+      id: string;
+      name: string;
+      surname: string;
+      studentId: string;
+      house: string;
   }
 
   const [students, setStudents] = useState<Student[]>([]);
@@ -171,26 +216,7 @@ const Settings = () => {
   };
 
   const handleDelete = async (studentId: string) => {
-    try {
-      const response = await fetch(`/api/deleteStudents`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.TURSO_AUTH_TOKEN}`,
-        },
-        body: JSON.stringify({ studentId }), // Send studentId in the body
-      });
-  
-      if (!response.ok) {
-        setError(`Failed to delete student: ${response.statusText}`);
-      }
-  
-      const updatedStudents: Student[] = await fetch('/api/getStudents').then(res => res.json());
-      setStudents(updatedStudents); // Refresh the list
-    } catch (error) {
-      setError('Failed to delete student');
-      console.error('Error deleting student:', error);
-    }
+    
   };
 
 
@@ -362,22 +388,22 @@ return (
           Current Students
         </Typography>
         <Paper>
-          <List>
-            {students.map(student => (
-              <ListItem key={student.id}>
-                <div style={{ width: '20px', height: '20px', backgroundColor: houses.find(h => h.houseName === student.house)?.houseColour || '#000', marginRight: '10px' }}></div>
-                <ListItemText
-                  primary={`${student.name} ${student.surname}`}
-                  secondary={`ID: ${student.studentId} | House: ${student.house}`}
-                />
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(student.studentId)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
+        <List>
+          {students.map(student => (
+            <ListItem key={student.id}>
+              <div style={{ width: '20px', height: '20px', backgroundColor: houses.find(h => h.houseName === student.house)?.houseColour || '#000', marginRight: '10px' }}></div>
+              <ListItemText
+                primary={`${student.name} ${student.surname}`}
+                secondary={`ID: ${student.studentId} | House: ${student.house}`}
+              />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="delete" onClick={() => handleOpenStudentModal({ id: student.id, name: `${student.name} ${student.surname}` })}>
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
           
           
           
@@ -449,25 +475,61 @@ return (
         </Fade>
       </div>
     </Paper>
-    <Modal
-      open={isModalOpen}
-      onClose={handleCloseModal}
-      aria-labelledby="modal-title"
-      aria-describedby="modal-description"
-    >
-      <Box sx={{ p: 4, backgroundColor: 'white', borderRadius: 1, boxShadow: 24 }}>
-        <Typography id="modal-title" variant="h6" component="h2">
-          Confirm Delete
-        </Typography>
-        <Typography id="modal-description" sx={{ mt: 2 }}>
-          Are you sure you want to delete this house? This will also delete all students in this house.
-        </Typography>
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button onClick={handleCloseModal} sx={{ mr: 2 }}>Cancel</Button>
-          <Button onClick={handleConfirmDelete} variant="contained" color="error">Delete</Button>
-        </Box>
-      </Box>
-    </Modal>
+
+    <Modal     //confirmation for deleting houses which also deletes students
+
+  open={isModalOpen}
+  onClose={handleCloseModal}
+  aria-labelledby="modal-title"
+  aria-describedby="modal-description"
+  className="modal"
+  sx={{
+    display: 'flex',
+    alignItems: 'center', // Centers vertically
+    justifyContent: 'center', // Centers horizontally
+  }}
+>
+  <Box className="modal-box" sx={{ backgroundColor: theme.palette.background.default, padding: "16px", borderRadius: "8px"}}>
+    <Typography id="modal-title" variant="h6" component="h2">
+      Confirm Delete
+    </Typography>
+    <Typography id="modal-description" sx={{ mt: 2 }}>
+      Are you sure you want to delete {houseToDelete}? This will also delete all students in this house.
+    </Typography>
+    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+      <Button onClick={handleCloseModal} sx={{ mr: 2 }}>Cancel</Button>
+      <Button onClick={handleConfirmDelete} variant="contained" color="error">Delete</Button>
+    </Box>
+  </Box>
+</Modal>
+
+<Modal //confirmation for deleing students
+
+  open={isStudentModalOpen}
+  onClose={handleCloseStudentModal}
+  aria-labelledby="student-modal-title"
+  aria-describedby="student-modal-description"
+  className="modal"
+  sx={{
+    display: 'flex',
+    alignItems: 'center', // Centers vertically
+    justifyContent: 'center', // Centers horizontally
+  }}
+>
+  <Box className="modal-box" sx={{ backgroundColor: theme.palette.background.default, padding: "16px", borderRadius: "8px"}}>
+    <Typography id="student-modal-title" variant="h6" component="h2">
+      Confirm Delete
+    </Typography>
+    <Typography id="student-modal-description" sx={{ mt: 2 }}>
+      Are you sure you want to delete {studentToDelete?.name}?
+    </Typography>
+    <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+      <Button onClick={handleCloseStudentModal} sx={{ mr: 2 }}>Cancel</Button>
+      <Button onClick={handleConfirmStudentDelete} variant="contained" color="error">Delete</Button>
+    </Box>
+  </Box>
+</Modal>
+
   </>
 );
 };

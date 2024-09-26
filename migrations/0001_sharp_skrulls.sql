@@ -1,0 +1,1 @@
+ALTER TABLE `points` ADD `event_description` text;

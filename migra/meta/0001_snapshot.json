@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "4a779fea-bbb7-40e8-a002-1c2f4cd4e666",
-  "prevId": "0fce77da-4693-4526-b60d-33e422b77058",
+  "id": "f25706f2-b382-44e7-8a68-27c44d1b64c0",
+  "prevId": "de9e098f-75b3-4470-8312-d7320cc7b2a4",
   "tables": {
     "houses": {
       "name": "houses",
@@ -73,13 +73,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "points_gained": {
           "name": "points_gained",
           "type": "integer",
@@ -93,13 +86,6 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
-        },
-        "event_description": {
-          "name": "event_description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         }
       },
       "indexes": {
@@ -109,43 +95,15 @@
             "associated_house"
           ],
           "isUnique": true
-        },
-        "points_user_id_unique": {
-          "name": "points_user_id_unique",
-          "columns": [
-            "user_id"
-          ],
-          "isUnique": true
         }
       },
-      "foreignKeys": {
-        "points_user_id_students_student_id_fk": {
-          "name": "points_user_id_students_student_id_fk",
-          "tableFrom": "points",
-          "tableTo": "students",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "student_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "students": {
       "name": "students",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
         "name": {
           "name": "name",
           "type": "text",
@@ -160,13 +118,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "student_id": {
-          "name": "student_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "house": {
           "name": "house",
           "type": "text",
@@ -175,15 +126,7 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "students_student_id_unique": {
-          "name": "students_student_id_unique",
-          "columns": [
-            "student_id"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}

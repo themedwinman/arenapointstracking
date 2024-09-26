@@ -109,13 +109,21 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
       setError("Please select a points action.");
       return;
     }
+    console.log('Selected House:' + selectedHouse);
     try {
-      const response = await axios.post('/api/addPoints', {
-        selectedHouse,
-        selectedStudent,
-        action,
-        pointsValue, // Use pointsValue consistently
-        eventDescription,
+      const response = await fetch('/api/addPoints', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          studentId: selectedStudent?.id,
+          houseId: selectedHouse,
+          
+          points: pointsValue,
+          action: action,
+        }),
+        
       });
       if (response.status === 200) {
         // Handle successful response

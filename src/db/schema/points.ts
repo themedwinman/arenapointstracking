@@ -8,6 +8,7 @@ export const points = sqliteTable('points', {
   associatedStudent: text('user_id').notNull().unique().references(() => students.studentId),
   pointsGained: integer('points_gained'),
   pointsLost: integer('points_lost'),
+  event_description: text('event_description'),
 });
 
 

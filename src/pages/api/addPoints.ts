@@ -17,8 +17,9 @@ export default async function addPoints(req: NextApiRequest, res: NextApiRespons
   
   try {
     // Determine if we are adding or removing points
-    const isAddingPoints = action === 'add points';
+    const isAddingPoints = action === 'add';
     console.log(isAddingPoints)
+    console.log('Action: ' + action)
     console.log('House Id:' + houseId)
     // Update the points table
     await db.insert(points).values({

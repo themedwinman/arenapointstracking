@@ -77,6 +77,10 @@ const Settings = () => {
       setError('House color must be unique');
       return;
     }
+    if (houses.some(house => house.houseName === newHouseName)) {
+      setError('House name must be unique');
+      return;
+    }
   
     try {
       const response = await fetch('/api/addHouses', {

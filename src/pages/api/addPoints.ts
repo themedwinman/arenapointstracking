@@ -9,7 +9,8 @@ export default async function addPoints(req: NextApiRequest, res: NextApiRespons
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { studentId, houseId, points: pointsValue, action } = req.body;
+  const { studentId, houseId, points: pointsValue, action, eventDescription } = req.body;
+  console.log('Event Description: ' + eventDescription)
 
   if (!studentId || !houseId || !pointsValue || !action) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -27,15 +28,17 @@ export default async function addPoints(req: NextApiRequest, res: NextApiRespons
       associatedHouse: houseId,
       pointsGained: isAddingPoints ? pointsValue : 0,
       pointsLost: isAddingPoints ? 0 : pointsValue,
+      event_description: eventDescription,
     }).execute();
   
     // Update the house's total points
     await db.update(houses)
-      .set({
-        houseTotalPoints: sql`${houses.houseTotalPoints} + ${isAddingPoints ? pointsValue : -pointsValue}`
-      })
-      .where(eq(houses.id, houseId))
-      .execute();
+    .set({
+      houseTotalPoints: sql`${houses.houseTotalPoints} + ${isAddingPoints ? pointsValue : -pointsValue}`
+    })
+    .where(eq(houses.houseName, houseId))
+    .execute();
+  
   
     // Return a success response
     return res.status(200).json({ message: 'Points updated successfully' });

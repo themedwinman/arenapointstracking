@@ -110,6 +110,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
       return;
     }
     console.log('Selected House:' + selectedHouse);
+    console.log('Event Description:' + eventDescription);
     try {
       const response = await fetch('/api/addPoints', {
         method: 'POST',
@@ -122,6 +123,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
           
           points: pointsValue,
           action: action,
+          eventDescription,
         }),
         
       });
@@ -173,11 +175,14 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
             <FormControl fullWidth margin="normal">
               <Autocomplete
                 options={students}
+                value={selectedStudent} // Bind the value to the selectedStudent state
                 getOptionLabel={(option) => `${option.name} ${option.surname} | ID: ${option.studentId} | ${option.house}`}
+                isOptionEqualToValue={(option, value) => option.studentId === value?.studentId}
                 renderInput={(params) => <TextField {...params} label="Select Student (Optional)" variant="outlined" />}
-                onChange={(event, newValue) => setSelectedStudent(newValue)}
+                onChange={(event, newValue) => setSelectedStudent(newValue)} // Update the state on change
+                clearOnEscape
               />
-            </FormControl>
+            </FormControl>  
             <FormControl fullWidth margin="normal">
               <ToggleButtonGroup
                 value={action}
@@ -191,7 +196,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
             </FormControl>
             <FormControl fullWidth margin="normal">
               <TextField
-                label="Points"
+                label="Points*"
                 type="number"
                 value={pointsValue}
                 onChange={(e) => setPointsValue(parseInt(e.target.value))}
@@ -200,7 +205,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
             </FormControl>
             <FormControl fullWidth margin="normal">
               <TextField
-                label="Event Description (Optional)"
+                label="Description*"
                 value={eventDescription}
                 onChange={(e) => setEventDescription(e.target.value)}
                 variant="outlined"

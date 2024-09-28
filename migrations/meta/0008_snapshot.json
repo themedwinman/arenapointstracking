@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e4352298-91b1-41b2-9f13-509e57f60f2c",
-  "prevId": "fe580feb-e75d-4fa2-8bcb-602f465d520e",
+  "id": "9512d2cb-53ca-41aa-802e-7be2a33c920c",
+  "prevId": "88f21dfc-9852-443c-8a3b-dbb6781bd830",
   "tables": {
     "houses": {
       "name": "houses",

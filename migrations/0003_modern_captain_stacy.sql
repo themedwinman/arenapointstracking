@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `points_user_id_unique` ON `points` (`user_id`);

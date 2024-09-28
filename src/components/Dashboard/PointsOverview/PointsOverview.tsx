@@ -1,13 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import scss from "./PointsOverview.module.scss";
 import { Card, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/system";
 import DataChart from "@/components/DataChart";
-import { barChartData, PointsGainedArray, TotalPointsArray } from "@/components/dataCache";
-import { alignProperty } from "@mui/material/styles/cssUtils";
-// import { LostPointsPercent } from "@/components/dataCache";
-import { PointsLostArray } from "@/components/dataCache";
 import { Chart } from "chart.js";
 
 export type PointsOverviewType = {
@@ -16,76 +12,188 @@ export type PointsOverviewType = {
   changeValue: string;
   color: string;
 };
-  
-  const PointsOverview = () => {
-    const theme = useTheme(); // Get the theme
-    const textColor = theme.palette.text.primary; // Get the primary text color
-    const font = "Roboto"; // Set the font for the chart
-    const mode = theme.palette.mode; // Get the mode of the theme
-    const gridColor = mode === "dark" ? "#0f0f0f" : "rgb(151, 151, 151)"; // Set the grid color for the chart
-  
-    useEffect(() => {
-      // Set the default color for all charts
-      Chart.defaults.color = textColor;
-      Chart.defaults.font.family = font; // Set the font for the chart
-    }, [textColor]);
-  
-    return (
-      <Grid container gap={2} className={scss.wrapper}>
-        <Paper className={scss.transactions}>
-          <div className={scss.chart}>
-            <DataChart
-              type={"bar"}
-              data={{
-                labels: barChartData.labels,
-                datasets: [
-                  {
-                    label: barChartData.datasets[0].label,
-                    data: barChartData.datasets[0].data,
-                    fill: barChartData.datasets[0].fill,
-                    backgroundColor: barChartData.datasets[0].backgroundColor,
-                  },
-                ],
-              }}
-              options={{
-                scales: {
-                  x: {
-                    ticks: {
-                      color: textColor, // Set the text color for x-axis  
-                    },
-                    grid: {
-                      color: gridColor, // Set the text color for x-axis grid
-                    }
-                  },
-                  y: {
-                    ticks: {
-                      color: textColor, // Set the text color for y-axis
-                    },
-                    grid: {
-                      color: gridColor, // Set the text color for y-axis grid
-                    }
+
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    fill: boolean;
+    backgroundColor: string | string[]; // Allow both string and array of strings
+  }[];
+}
+
+const PointsOverview = () => {
+  const theme = useTheme();
+  const textColor = theme.palette.text.primary;
+  const font = "Roboto";
+  const mode = theme.palette.mode;
+  const gridColor = mode === "dark" ? "#0f0f0f" : "rgb(151, 151, 151)";
+
+  const [barChartData, setBarChartData] = useState<ChartData>({
+    labels: [],
+    datasets: [{ label: "", data: [], fill: false, backgroundColor: "" }],
+  });
+  const [totalPoints, setTotalPoints] = useState<ChartData>({
+    labels: [],
+    datasets: [{
+      data: [], backgroundColor: [],
+      label: "",
+      fill: false
+    }],
+  });
+  const [pointsGained, setPointsGained] = useState<ChartData>({
+    labels: [],
+    datasets: [{
+      data: [], backgroundColor: [],
+      label: "",
+      fill: false
+    }],
+  });
+  const [pointsLost, setPointsLost] = useState<ChartData>({
+    labels: [],
+    datasets: [{
+      data: [], backgroundColor: [],
+      label: "",
+      fill: false
+    }],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const houseResponse = await fetch('/api/getHouses');
+        const houses = await houseResponse.json();
+        console.log('Houses Client-Side:', houses);
+
+        const pointsResponse = await fetch('/api/getPoints');
+        const points = await pointsResponse.json();
+        console.log('Points Client-Side:', points);
+
+        const housesData = Array.isArray(houses) ? houses : houses.houses;
+        const pointsData = Array.isArray(points) ? points : points.points;
+
+        if (!Array.isArray(housesData) || !Array.isArray(pointsData)) {
+          console.error('Invalid data format:', housesData, pointsData);
+          return;
+        }
+
+        const houseNames = housesData.map((house) => house.houseName || 'Unknown House');
+        const houseColors = housesData.map((house) => {
+          const color = house.houseColour || '#FFFFFF'; // Default color
+          return typeof color === 'string' ? color : '#FFFFFF'; // Ensure it's a string
+        });
+
+        const totalPointsData = houseNames.map((name) => {
+          const housePoints = pointsData.filter((point) => point.associatedHouse === name);
+          return housePoints.reduce(
+            (acc, point) => acc + (point.pointsGained || 0) - (point.pointsLost || 0),
+            0
+          );
+        });
+
+        const pointsGainedData = houseNames.map((name) => {
+          const housePoints = pointsData.filter((point) => point.associatedHouse === name);
+          return housePoints.reduce((acc, point) => acc + (point.pointsGained || 0), 0);
+        });
+
+        const pointsLostData = houseNames.map((name) => {
+          const housePoints = pointsData.filter((point) => point.associatedHouse === name);
+          return housePoints.reduce((acc, point) => acc + (point.pointsLost || 0), 0);
+        });
+
+        setBarChartData({
+          labels: houseNames,
+          datasets: [
+            {
+              label: 'Total Points',
+              data: totalPointsData,
+              fill: false,
+              backgroundColor: houseColors,
+            }
+          ],
+        });
+
+        // Update other chart states
+        setTotalPoints({
+          labels: houseNames,
+          datasets: [{
+            data: totalPointsData, backgroundColor: houseColors,
+            label: "",
+            fill: false
+          }],
+        });
+        setPointsGained({
+          labels: houseNames,
+          datasets: [{
+            data: pointsGainedData, backgroundColor: houseColors,
+            label: "",
+            fill: false
+          }],
+        });
+        setPointsLost({
+          labels: houseNames,
+          datasets: [{
+            data: pointsLostData, backgroundColor: houseColors,
+            label: "",
+            fill: false
+          }],
+        });
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+
+    // Set the default color for all charts
+    Chart.defaults.color = textColor;
+    Chart.defaults.font.family = font;
+  }, [textColor, font]);
+
+  return (
+    <Grid container gap={2} className={scss.wrapper}>
+      <Paper className={scss.transactions}>
+        <div className={scss.chart}>
+          <DataChart
+            type={"bar"}
+            data={barChartData}
+            options={{
+              scales: {
+                x: {
+                  grid: {
+                    color: gridColor,
                   },
                 },
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                  title: {
-                    display: true,
-                    text: 'Total Points Per House',
-                    color: textColor, // Set the text color for title
+                y: {
+                  grid: {
+                    color: gridColor,
                   },
                 },
-              }}
-            />
-          </div>
-          <div className={scss.cardWrapper}>
+              },
+              plugins: {
+                legend: {
+                  display: false,
+                },
+                title: {
+                  display: true,
+                  text: 'Total Points Per House',
+                  color: textColor,
+                },
+              },
+            }}
+          />
+        </div>
+        <div className={scss.cardWrapper}>
           <Card className={scss.card} variant={"outlined"}>
             <div className={scss.cardTitle}>
               <Typography>Total Points</Typography>
             </div>
             <div className={scss.cardValue}>
-              <Typography color={theme.palette.success.main}>{TotalPointsArray.reduce((a, b) => a + b, 0)} Points</Typography>
+              <Typography color={theme.palette.success.main}>
+                {totalPoints.datasets[0].data.reduce((a, b) => a + b, 0)} Points
+              </Typography>
             </div>
           </Card>
           <Card className={scss.card} variant={"outlined"}>
@@ -93,7 +201,9 @@ export type PointsOverviewType = {
               <Typography>Points Gained</Typography>
             </div>
             <div className={scss.cardValue}>
-              <Typography color={theme.palette.success.main}>{PointsGainedArray.reduce((a, b) => a + b, 0)} Points</Typography>
+              <Typography color={theme.palette.success.main}>
+                {pointsGained.datasets[0].data.reduce((a, b) => a + b, 0)} Points
+              </Typography>
             </div>
           </Card>
           <Card className={scss.card} variant={"outlined"}>
@@ -101,13 +211,15 @@ export type PointsOverviewType = {
               <Typography>Points Lost</Typography>
             </div>
             <div className={scss.cardValue}>
-              <Typography color={theme.palette.error.main}>{PointsLostArray.reduce((a, b) => a + b, 0)} Points</Typography>
+              <Typography color={theme.palette.error.main}>
+                {pointsLost.datasets[0].data.reduce((a, b) => a + b, 0)} Points
+              </Typography>
             </div>
           </Card>
         </div>
-        </Paper>
-      </Grid>
-    );
-  };
-  
+      </Paper>
+    </Grid>
+  );
+};
+
 export default PointsOverview;

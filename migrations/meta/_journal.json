@@ -2,12 +2,67 @@
   "version": "7",
   "dialect": "sqlite",
   "entries": [
-
     {
       "idx": 1,
       "version": "6",
-      "when": 1727388316993,
-      "tag": "0001_sharp_skrulls",
+      "when": 1727520798472,
+      "tag": "0001_remarkable_klaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1727520871654,
+      "tag": "0002_steep_midnight",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1727521246660,
+      "tag": "0003_modern_captain_stacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1727522184957,
+      "tag": "0004_fat_wallow",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1727522202670,
+      "tag": "0005_lush_paper_doll",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1727522984785,
+      "tag": "0006_common_titania",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1727523000891,
+      "tag": "0007_wild_anthem",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1727523084501,
+      "tag": "0008_ordinary_proudstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1727523101925,
+      "tag": "0009_jazzy_luckman",
       "breakpoints": true
     }
   ]

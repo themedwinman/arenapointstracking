@@ -118,7 +118,7 @@ const Data: React.FC<{ userRole: string }> = ({ userRole }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          studentId: selectedStudent?.id,
+          studentId: selectedStudent?.studentId,
           houseId: selectedHouse,
           
           points: pointsValue,

@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "e4352298-91b1-41b2-9f13-509e57f60f2c",
-  "prevId": "fe580feb-e75d-4fa2-8bcb-602f465d520e",
+  "id": "fa300be0-ad5a-4e66-a089-f4c416b6451a",
+  "prevId": "9512d2cb-53ca-41aa-802e-7be2a33c920c",
   "tables": {
     "houses": {
       "name": "houses",
@@ -53,6 +53,71 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "points": {
+      "name": "points",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "associated_house": {
+          "name": "associated_house",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "points_gained": {
+          "name": "points_gained",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "points_lost": {
+          "name": "points_lost",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "event_description": {
+          "name": "event_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "points_user_id_students_student_id_fk": {
+          "name": "points_user_id_students_student_id_fk",
+          "tableFrom": "points",
+          "tableTo": "students",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "student_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

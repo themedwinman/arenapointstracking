@@ -188,7 +188,7 @@ const PointsOverview = () => {
         <div className={scss.cardWrapper}>
           <Card className={scss.card} variant={"outlined"}>
             <div className={scss.cardTitle}>
-              <Typography>Total Points</Typography>
+              <Typography variant="h5">Total Combined <br/> House Points</Typography>
             </div>
             <div className={scss.cardValue}>
               <Typography color={theme.palette.success.main}>
@@ -198,7 +198,7 @@ const PointsOverview = () => {
           </Card>
           <Card className={scss.card} variant={"outlined"}>
             <div className={scss.cardTitle}>
-              <Typography>Points Gained</Typography>
+              <Typography variant="h5">Total Combined <br/> Points Gained</Typography>
             </div>
             <div className={scss.cardValue}>
               <Typography color={theme.palette.success.main}>
@@ -208,7 +208,7 @@ const PointsOverview = () => {
           </Card>
           <Card className={scss.card} variant={"outlined"}>
             <div className={scss.cardTitle}>
-              <Typography>Points Lost</Typography>
+              <Typography variant="h5">Total Combined <br/>Points Lost</Typography>
             </div>
             <div className={scss.cardValue}>
               <Typography color={theme.palette.error.main}>

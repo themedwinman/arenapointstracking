@@ -26,7 +26,7 @@ export type HeaderProps = {
 const Header = (props: HeaderProps) => {
   const { ColorModeContext } = props;
   const { data: session } = useSession();
-  const userProfileImg = session?.user?.image as string;
+  const userProfileImg = (session?.user as any)?.image as string || '/default-profile.png';
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
@@ -94,9 +94,7 @@ const Header = (props: HeaderProps) => {
           </Typography>
             {
             tabletCheck && (
-              <Box sx={{paddingRight: 5, marginLeft: 'auto'}}>
-                <Typography>Signed in as {session?.user?.email}</Typography>
-              </Box>
+              <Box sx={{ flexGrow: 1 }} />
             
             )}
 

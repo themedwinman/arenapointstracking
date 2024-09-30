@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { db } from "@/db";
 import { students } from "@/db/schema/students";
 import { houses } from "@/db/schema/houses";
+import { points } from "@/db/schema/points";
 
 export default async function deleteHouses(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'DELETE') {
@@ -21,6 +22,8 @@ export default async function deleteHouses(req: NextApiRequest, res: NextApiResp
 
     // Use Drizzle ORM to delete the house where the house name matches
     await db.delete(houses).where(eq(houses.houseName, houseName)).execute();
+
+    await db.delete(points).where(eq(points.associatedHouse, houseName)).execute();
 
     // Return a success response
     return res.status(200).json({ message: 'House and associated students deleted successfully' });

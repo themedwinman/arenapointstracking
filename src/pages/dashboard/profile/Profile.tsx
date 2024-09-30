@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import Paper from "@mui/material/Paper";
 import {
+  AppBar,
   Avatar,
   Box,
   Button,
@@ -9,6 +10,7 @@ import {
   FormControlLabel,
   Grid,
   TextField,
+  Toolbar,
   Typography,
 } from "@mui/material";
 
@@ -41,13 +43,18 @@ const Profile = () => {
   return (
     <>
       <Box>
-      <Typography variant="h4" sx={{ paddingBottom: 4 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h4" sx={{marginLeft: "auto", marginRight: "auto"}}>
             Profile
-            </Typography>
-        <Typography variant={"h6"} sx={{ paddingBottom: 4 }}>
-          Hey {session ? session?.user?.name : "User"}, welcome to your profile
-          👋
-        </Typography>
+          </Typography>
+        </Toolbar>
+        <Toolbar>
+          <Typography variant="h6" sx={{marginLeft: "auto", marginRight: "auto"}}>
+            Welcome to your profile {session?.user?.name}
+          </Typography>
+        </Toolbar>
+      </AppBar>
         <Paper sx={{ padding: "1rem 2rem" }}>
 
           <Grid container justifyContent="center">
@@ -59,7 +66,7 @@ const Profile = () => {
                     width: 100,
                     marginBottom: 2,
                   }}
-                  src={session?.user?.image as string}
+                  src={(session?.user as any)?.image}
                 />
               </Box>
               <form

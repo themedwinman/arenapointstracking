@@ -13,6 +13,7 @@ const Login = () => {
         <Button variant={"contained"} color={"error"} onClick={() => signOut()}>
           Sign out
         </Button>
+        
       </>
     );
   }

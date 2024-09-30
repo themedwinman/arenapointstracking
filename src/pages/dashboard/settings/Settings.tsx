@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Key } from 'react';
-import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButton, ToggleButtonGroup, ListItemText, ListItemSecondaryAction, IconButton, useTheme, Fade } from '@mui/material';
+import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButton, ToggleButtonGroup, ListItemText, ListItemSecondaryAction, IconButton, useTheme, Fade, AppBar, Toolbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './Settings.module.scss';
 import { Modal, Box } from '@mui/material';
@@ -279,9 +279,13 @@ return (
   <>
     <Paper elevation={3} className={styles.paper}>
       <div className={styles.settingsContainer}>
-      <Typography variant="h4" gutterBottom>
-        Configuration Page
-      </Typography>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h4" sx={{marginLeft: "auto", marginRight: "auto"}}>
+            Configuration Page
+          </Typography>
+        </Toolbar>
+      </AppBar>
       {error && <Alert severity="error">{error}</Alert>}
 
       <div style={{marginTop: "20px"}}>
@@ -289,12 +293,13 @@ return (
           onClick={() => setActiveTab('students')}
           className={styles.tabButton}
           sx={{
-            backgroundColor: activeTab === 'students' ? theme.palette.primary.main : 'transparent',
-            color: activeTab === 'students' ? theme.palette.getContrastText(theme.palette.primary.main) : theme.palette.text.primary,
+            backgroundColor: activeTab === 'students' ? theme.palette.secondary.main : theme.palette.secondary.main + '33',
+            color: activeTab === 'students' ? theme.palette.getContrastText(theme.palette.secondary.main) : theme.palette.text.primary,
             transition: 'background-color 0.3s, color 0.3s',
             '&:hover': {
-              backgroundColor: theme.palette.primary.light,
+              backgroundColor: theme.palette.secondary.light,
               transform: "0.3s",
+              color: theme.palette.getContrastText(theme.palette.secondary.main),
             },
           }}
         >
@@ -304,12 +309,13 @@ return (
           onClick={() => setActiveTab('houses')}
           className={styles.tabButton}
           sx={{
-            backgroundColor: activeTab === 'houses' ? theme.palette.primary.main : 'transparent',
-            color: activeTab === 'houses' ? theme.palette.getContrastText(theme.palette.primary.main) : theme.palette.text.primary,
+            backgroundColor: activeTab === 'houses' ? theme.palette.secondary.main : theme.palette.secondary.main + '33',
+            color: activeTab === 'houses' ? theme.palette.getContrastText(theme.palette.secondary.main) : theme.palette.text.primary,
             transition: 'background-color 0.3s, color 0.3s',
             '&:hover': {
-              backgroundColor: theme.palette.primary.light,
+              backgroundColor: theme.palette.secondary.light,
               transform: "0.3s",
+              color: theme.palette.getContrastText(theme.palette.secondary.main),
             },
           }}
         >
@@ -364,7 +370,7 @@ return (
             aria-label="house"
             fullWidth
           >
-            {houses.map((house, index) => (
+             {houses.map((house, index) => (
               <ToggleButton
                 key={house.id}
                 value={house.houseName}
@@ -383,7 +389,7 @@ return (
             ))}
           </ToggleButtonGroup>
         </div>
-        <Button type="submit" variant="contained" color="primary" className={styles.formButton} fullWidth>
+        <Button type="submit" variant="contained" color="primary" className={styles.formButton} fullWidth sx={{color: theme.palette.getContrastText(theme.palette.primary.main)}}>
           Add Student
         </Button>
       </form>
@@ -393,7 +399,7 @@ return (
         </Typography>
         <Paper>
         <List>
-          {students.map(student => (
+          {students.filter(student => student.studentId !== "None").map(student => (
             <ListItem key={student.id}>
               <div style={{ width: '20px', height: '20px', backgroundColor: houses.find(h => h.houseName === student.house)?.houseColour || '#000', marginRight: '10px' }}></div>
               <ListItemText
@@ -447,7 +453,7 @@ return (
                 InputLabelProps={{ shrink: true }}
               />
               </div>
-              <Button type="submit" variant="contained" color="primary" className={styles.addHouseButton}>
+              <Button type="submit" variant="contained" color="primary" className={styles.addHouseButton} sx={{color: theme.palette.getContrastText(theme.palette.primary.main)}}>
                 Add House
               </Button>
             </form>

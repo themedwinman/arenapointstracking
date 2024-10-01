@@ -12,6 +12,7 @@ interface DashboardProps {
   
   const Dashboard: React.FC<DashboardProps> = ({ userRole }) => {
     console.log('userRole in Dashboard:', userRole); // Add logging
+    <Data userRole={userRole} />
     return (
         
         <Box>
@@ -24,8 +25,11 @@ interface DashboardProps {
             </Grid>
             {/* breaking down the points into smaller charts */}
             <PointsBottomRow />
-            <Data userRole={userRole} />
+        
         </Box>
+        
+        
     )
+    
 }
 export default Dashboard;

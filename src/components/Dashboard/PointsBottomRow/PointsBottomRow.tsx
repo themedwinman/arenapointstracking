@@ -3,6 +3,7 @@ import DataChart from "@/components/DataChart";
 import { Paper, useTheme, Grid } from "@mui/material";
 import scss from "./PointsBottomRow.module.scss";
 import { Chart } from "chart.js";
+import { WhatsApp } from '@mui/icons-material';
 
 const PointsBottomRow = () => {
   const theme = useTheme();
@@ -12,20 +13,20 @@ const PointsBottomRow = () => {
   // State variables to store points data
   interface ChartData {
     labels: string[];
-    datasets: { data: number[]; backgroundColor: string[] }[];
+    datasets: { data: number[]; backgroundColor: string[], borderColor: string[], borderWidth: number[], hoverOffset: number[] }[];
   }
 
   const [totalPoints, setTotalPoints] = useState<ChartData>({
     labels: [],
-    datasets: [{ data: [], backgroundColor: [] }],
+    datasets: [{ data: [], backgroundColor: [], borderColor: [], borderWidth: [], hoverOffset: [] }],
   });
   const [pointsGained, setPointsGained] = useState<ChartData>({
     labels: [],
-    datasets: [{ data: [], backgroundColor: [] }],
+    datasets: [{ data: [], backgroundColor: [], borderColor: [], borderWidth: [], hoverOffset: [] }],
   });
   const [pointsLost, setPointsLost] = useState<ChartData>({
     labels: [],
-    datasets: [{ data: [], backgroundColor: [] }],
+    datasets: [{ data: [], backgroundColor: [], borderColor: [], borderWidth: [], hoverOffset: [] }],
   });
 
   const [chartKey, setChartKey] = useState(0); // State variable to trigger re-render
@@ -74,15 +75,15 @@ const PointsBottomRow = () => {
   
         setTotalPoints({
           labels: houseNames,
-          datasets: [{ data: totalPointsData, backgroundColor: houseColors }],
+          datasets: [{ data: totalPointsData, backgroundColor: houseColors, borderColor: ["#666"], borderWidth: [0.5], hoverOffset: [8] }],
         });
         setPointsGained({
           labels: houseNames,
-          datasets: [{ data: pointsGainedData, backgroundColor: houseColors }],
+          datasets: [{ data: pointsGainedData, backgroundColor: houseColors, borderColor: ["#666"], borderWidth: [0.5], hoverOffset: [8] }],
         });
         setPointsLost({
           labels: houseNames,
-          datasets: [{ data: pointsLostData, backgroundColor: houseColors }],
+          datasets: [{ data: pointsLostData, backgroundColor: houseColors, borderColor: ["#666"], borderWidth: [0.5], hoverOffset: [8] }],
         });
       } catch (error) {
         console.error('Error fetching data:', error);

@@ -18,6 +18,7 @@ import ThemeToggleButton from '../ThemeToggleButton';
 import { useMediaQuery } from '@mui/material';
 import NextLink from "next/link";
 import { useTheme } from '@mui/material';
+import { useUser } from '@/context/UserContext';
 
 export type HeaderProps = {
   ColorModeContext: React.Context<{ toggleColorMode: () => void }>;
@@ -30,7 +31,7 @@ const Header = (props: HeaderProps) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const theme = useTheme();
-
+  const userRole = (session?.user as any)?.role as string || 'Guest';
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
     
@@ -134,8 +135,11 @@ const Header = (props: HeaderProps) => {
                   <Typography textAlign="center">Profile</Typography>
                 </NextLink>
               </MenuItem>
+              <MenuItem>
+              Your Role: {userRole.charAt(0).toUpperCase() + userRole.slice(1, 5) + ' ' + userRole.charAt(5).toUpperCase() + userRole.slice(6)}
+              </MenuItem>
                 <MenuItem onClick={() => session ? signOut() : signIn()}>
-                  <Typography textAlign="center">{session ? "Logout" : "Login"}</Typography>
+                  <Typography textAlign="center" sx={{color: session ? theme.palette.error.main : theme.palette.success.main}}>{session ? "Logout" : "Login"}</Typography>
                 </MenuItem>
             </Menu>
           </Box>

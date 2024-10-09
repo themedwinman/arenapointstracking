@@ -16,6 +16,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import 'dotenv/config';
+import { UserProvider } from "@/context/UserContext";
 
 
 interface CustomPageProps {
@@ -70,9 +71,11 @@ const App = ({
     <SessionProvider session={session}>
       <CssBaseline />
       <Header ColorModeContext={ColorModeContext}/>
+      <UserProvider>
       <Layout>
         <Component {...pageProps} />
       </Layout>
+      </UserProvider>
     </SessionProvider>
     </ThemeProvider>
     </ColorModeContext.Provider>

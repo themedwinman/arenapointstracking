@@ -14,7 +14,7 @@ const NotAuthorizedMessage = styled.div`
   text-align: center;
 `;
 
-const withAuthorizationAdmin = (WrappedComponent: React.ComponentType<any>) => {
+const withAuthorizationSuperAdmin = (WrappedComponent: React.ComponentType<any>) => {
   const WithAuthorization: React.FC = (props) => {
     const { user, loading } = useUser();
 
@@ -25,7 +25,7 @@ const withAuthorizationAdmin = (WrappedComponent: React.ComponentType<any>) => {
     }
 
     // Check if the user is an admin or superadmin
-    if (user?.role !== 'admin' && user?.role !== 'superadmin') {
+    if (user?.role !== 'superadmin') {
       // Render a "Not Authorized" message or component
       return (
         <NotAuthorizedMessage>
@@ -41,4 +41,4 @@ const withAuthorizationAdmin = (WrappedComponent: React.ComponentType<any>) => {
   return WithAuthorization;
 };
 
-export default withAuthorizationAdmin;
+export default withAuthorizationSuperAdmin;

@@ -3,6 +3,7 @@ import { Paper, Typography, TextField, Button, Alert, List, ListItem, ToggleButt
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from './Settings.module.scss';
 import { Modal, Box } from '@mui/material';
+import withAuthorizationSuperAdmin from '@/components/hoc/withAuthorizationSuperAdmin';
 
 
 
@@ -544,7 +545,7 @@ return (
 );
 };
 
-export default Settings;
+export default withAuthorizationSuperAdmin(Settings);
 
 
 

@@ -3,35 +3,23 @@ import React, { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/components/login/Login";
-import { exportedDbUser } from "@/pages/api/auth/[...nextauth]"; // Import the exported dbUser
+import { exportedDbUser, ExtendedUser } from "@/pages/api/auth/[...nextauth]";
 
-interface HomeProps {
-  userRole: string | null;
-}
-
-console.log("exportedDbUser:", exportedDbUser); // Add logging
-
-const Home: React.FC<HomeProps> = () => {
-  const [userRole, setUserRole] = useState<string | null>(null);
+const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchUserRole = async () => {
       const session = await getSession();
       console.log("Session data:", session); // Add logging
+      console.log("Session user:", session?.user); // Add logging
 
-      if (session?.user?.email) {
-        console.log("Using exportedDbUser for permissions:", exportedDbUser); // Add logging
-
-        if (exportedDbUser?.superadmin === true) {
-          setUserRole("superadmin");
-        } else if (exportedDbUser?.admin === true) {
-          setUserRole("admin");
-        } else {
-          setUserRole("user");
-        }
+      if (session?.user) {
+        const user = session.user as ExtendedUser;
+        console.log("User admin:", user.admin); // Add logging
+        console.log("User superadmin:", user.superadmin); // Add logging
       } else {
-        console.log("No email found in session"); // Add logging
+        console.log("No user found in session"); // Add logging
       }
 
       setLoading(false);
@@ -40,18 +28,7 @@ const Home: React.FC<HomeProps> = () => {
     fetchUserRole();
   }, []);
 
-  const getUserPermissions = (role: string | null) => {
-    if (role === "superadmin") {
-      return ["superadmin"];
-    } else if (role === "admin") {
-      return ["admin"];
-    } else {
-      return ["user"];
-    }
-  };
-
-  const userPermissions = getUserPermissions(userRole);
-  console.log("User permissions:", userPermissions); // Add logging
+  console.log("exportedDbUser before rendering:", exportedDbUser); // Add logging
 
   if (loading) {
     return <div>Loading...</div>;
@@ -59,7 +36,7 @@ const Home: React.FC<HomeProps> = () => {
 
   return (
     <main className={scss.main}>
-      {userRole ? <Dashboard userRole={userRole} /> : <Login />}
+      {exportedDbUser ? <Dashboard /> : <Login />}
     </main>
   );
 };

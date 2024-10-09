@@ -4,8 +4,13 @@ import scss from "./Data.module.scss";
 import { styled } from '@mui/material/styles';
 import ToggleButton from '@mui/material/ToggleButton';
 import Head from "next/head";
-import withAuthorization from "@/components/hoc/withAuthorizationAdmin";
+import withAuthorizationAdmin from "@/components/hoc/withAuthorizationAdmin";
 import DataRibbon from "@/components/Dashboard/DataRibbon";
+import { useUser } from "@/context/UserContext";
+import Login from "@/components/login/Login";
+
+
+
 
 interface Student {
   id: string;
@@ -70,6 +75,15 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
   const [houses, setHouses] = useState<House[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0); // State to trigger DataRibbon refresh
+  const { user, loading } = useUser();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <Login />;
+  }
   
   const isInitialMount = useRef(true); // Ref to track the initial mount
 
@@ -248,4 +262,4 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
   );
 };
 
-export default withAuthorization(Data);
+export default withAuthorizationAdmin(Data);

@@ -3,9 +3,9 @@ import GoogleProvider from "next-auth/providers/google";
 import { db } from "@/db";
 import { users } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
-import { CatchingPokemonSharp } from "@mui/icons-material";
 
 export interface ExtendedUser extends NextAuthUser {
+  role: string;
   admin: boolean;
   superadmin: boolean;
 }
@@ -28,12 +28,25 @@ const options: NextAuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
-    async session({ session, token, user }) {
-      if (session?.user) {
-        (session.user as ExtendedUser).admin = exportedDbUser?.admin ?? false;
-        (session.user as ExtendedUser).superadmin = exportedDbUser?.superadmin ?? false;
+    async session({ session, token }) {
+      if (session?.user && token?.dbUser) {
+        const extendedUser = token.dbUser as ExtendedUser;
+        (session.user as ExtendedUser).admin = extendedUser.admin;
+        (session.user as ExtendedUser).superadmin = extendedUser.superadmin;
+        (session.user as ExtendedUser).role = extendedUser.superadmin ? 'superadmin' : extendedUser.admin ? 'admin' : 'user';
       }
       return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        const extendedUser = user as ExtendedUser;
+        token.dbUser = {
+          admin: extendedUser.admin,
+          superadmin: extendedUser.superadmin,
+        };
+        exportedDbUser = extendedUser; // Export the dbUser
+      }
+      return token;
     },
     async signIn({ user, account, profile, email, credentials }) {
       const userEmail = email || profile?.email;
@@ -61,6 +74,8 @@ const options: NextAuthOptions = {
             admin: false,
             superadmin: false,
           });
+
+          dbUser = await db.select().from(users).where(eq(users.email, userEmail as string)).get() as unknown as ExtendedUser;
         } catch (error) {
           console.error('Error adding user:', error);
           return false;
@@ -71,7 +86,6 @@ const options: NextAuthOptions = {
         (user as ExtendedUser).admin = dbUser.admin;
         (user as ExtendedUser).superadmin = dbUser.superadmin;
         exportedDbUser = dbUser; // Export the dbUser
-        console.log('exportedDbUser:', exportedDbUser);
         console.log('User signed in:', user);
         console.log('dbUser:', dbUser);
         console.log('Permissions:', { admin: (user as ExtendedUser).admin, superadmin: (user as ExtendedUser).superadmin });
@@ -83,5 +97,4 @@ const options: NextAuthOptions = {
 };
 
 export { exportedDbUser };
-console.log('exportedDbUser:', exportedDbUser);
 export default NextAuth(options);

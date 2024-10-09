@@ -27,6 +27,8 @@ const Profile = () => {
     confirmPassword: "",
     receiveEmails: false,
   });
+  const userRole = (session?.user as any)?.role as string || 'Guest';
+
 
   const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
@@ -117,7 +119,13 @@ const Profile = () => {
                       }
                       label="Check this box to request admin access (teachers only)"
                     />
+                    <Typography variant="body1" color="textSecondary">
+                      {userRole === 'admin' && 'You are already an Admin'}
+                      {userRole === 'superadmin' && 'You are already a Super Admin'}
+                      {userRole === 'user' && 'Your current role is: User'}
+                    </Typography>
                   </Grid>
+                 
                   <Grid item xs={12}>
                     <Button type="submit" variant="contained" color="primary">
                       Save Changes

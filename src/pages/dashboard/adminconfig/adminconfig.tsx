@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Box, Button, TextField, Typography, List, ListItem, ListItemText, IconButton, Grid } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useUser } from '@/context/UserContext';
 import { getSession } from 'next-auth/react';
+import withAuthorizationSuperAdmin from '@/components/hoc/withAuthorizationSuperAdmin';
 
 const AdminConfig: React.FC = () => {
   const { user, loading } = useUser();
-  const [users, setUsers] = useState([]);
+  interface User {
+    email: string;
+    role: string;
+    admin: boolean;
+    adminrequest: boolean;
+  }
+
+  const [users, setUsers] = useState<User[]>([]);
   const [email, setEmail] = useState('');
 
   useEffect(() => {
@@ -33,7 +41,7 @@ const AdminConfig: React.FC = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, role: 'admin' }),
+      body: JSON.stringify({ email, admin: true, adminrequest: false }),
     });
 
     if (response.ok) {
@@ -49,7 +57,37 @@ const AdminConfig: React.FC = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, role: 'user' }),
+      body: JSON.stringify({ email, admin: false }),
+    });
+
+    if (response.ok) {
+      const updatedUser = await response.json();
+      setUsers(users.map(user => user.email === updatedUser.email ? updatedUser : user));
+    }
+  };
+
+  const handleApproveRequest = async (email: string) => {
+    const response = await fetch('/api/admin/users', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, admin: true, adminrequest: false }),
+    });
+
+    if (response.ok) {
+      const updatedUser = await response.json();
+      setUsers(users.map(user => user.email === updatedUser.email ? updatedUser : user));
+    }
+  };
+
+  const handleDenyRequest = async (email: string) => {
+    const response = await fetch('/api/admin/users', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, adminrequest: false }),
     });
 
     if (response.ok) {
@@ -62,9 +100,12 @@ const AdminConfig: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
+  if (!user || user.role !== 'superadmin') {
     return <div>You are not authorized to view this page.</div>;
   }
+
+  const adminRequests = users.filter(user => user.adminrequest);
+  const currentAdmins = users.filter(user => user.admin);
 
   return (
     <Box sx={{ padding: 4 }}>
@@ -83,24 +124,56 @@ const AdminConfig: React.FC = () => {
           Add Admin Role
         </Button>
       </Box>
-      <Typography variant="h6" gutterBottom>
-        Users
-      </Typography>
-      <List>
-        {users.map((user) => (
-          <ListItem key={user.email} secondaryAction={
-            user.role === 'admin' ? (
-              <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveAdmin(user.email)}>
-                <DeleteIcon />
-              </IconButton>
-            ) : null
-          }>
-            <ListItemText primary={`${user.email} (${user.role})`} />
-          </ListItem>
-        ))}
-      </List>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={4}>
+          <Typography variant="h6" gutterBottom>
+            Admin Requests
+          </Typography>
+          <List>
+            {adminRequests.map((user) => (
+              <ListItem key={user.email}>
+                <ListItemText primary={user.email} />
+                <Button variant="contained" color="primary" onClick={() => handleApproveRequest(user.email)}>
+                  Approve
+                </Button>
+                <Button variant="contained" color="secondary" onClick={() => handleDenyRequest(user.email)}>
+                  Deny
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Typography variant="h6" gutterBottom>
+            Current Admins
+          </Typography>
+          <List>
+            {currentAdmins.map((user) => (
+              <ListItem key={user.email} secondaryAction={
+                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveAdmin(user.email)}>
+                  <DeleteIcon />
+                </IconButton>
+              }>
+                <ListItemText primary={user.email} />
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Typography variant="h6" gutterBottom>
+            All Users
+          </Typography>
+          <List>
+            {users.map((user) => (
+              <ListItem key={user.email}>
+                <ListItemText primary={`${user.email} (${user.role})`} />
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
 
-export default AdminConfig;
+export default withAuthorizationSuperAdmin(AdminConfig);

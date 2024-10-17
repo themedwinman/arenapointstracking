@@ -25,17 +25,40 @@ const Profile = () => {
     email: session?.user?.email,
     password: "",
     confirmPassword: "",
-    receiveEmails: false,
+    adminRequest: false,
   });
   const userRole = (session?.user as any)?.role as string || 'Guest';
 
 
-  const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, checked } = event.target;
+    const newValue = name === "receiveEmails" ? checked : value;
+
     setFormData((prevState) => ({
       ...prevState,
-      [name]: name === "receiveEmails" ? checked : value,
+      [name]: newValue,
     }));
+
+    if (name === "receiveEmails") {
+      try {
+        const response = await fetch('/api/updateUserRole', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            isAdmin: newValue,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to update user role:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error updating user role:', error);
+      }
+    }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -46,11 +69,6 @@ const Profile = () => {
     <>
       <Box>
       <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h4" sx={{marginLeft: "auto", marginRight: "auto"}}>
-            Profile
-          </Typography>
-        </Toolbar>
         <Toolbar>
           <Typography variant="h6" sx={{marginLeft: "auto", marginRight: "auto"}}>
             Welcome to your profile {session?.user?.name}
@@ -74,8 +92,12 @@ const Profile = () => {
               <form
                 onSubmit={handleSubmit}
                 style={{ maxWidth: 600, margin: "0 auto" }}
+                aria-disabled
               >
-                <Grid container spacing={3}>
+                <Typography variant="h6" gutterBottom sx={{textAlign: "center", marginBottom: "2rem"}}>
+                  Sorry Profile features are not available yet :(
+                </Typography>
+                {/* <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       required
@@ -106,20 +128,20 @@ const Profile = () => {
                       value={formData.email}
                       onChange={handleFormChange}
                     />
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12}>
                     <FormControlLabel
                       control={
                         <Checkbox
                           name="adminApplication"
-                          checked={formData.receiveEmails}
+                          checked={formData.adminRequest}
                           onChange={handleFormChange}
                           color="primary"
                         />
                       }
                       label="Check this box to request admin access (teachers only)"
                     />
-                    <Typography variant="body1" color="textSecondary">
+                    <Typography variant="body1" color="textSecondary" sx={{marginBottom: 2}}>
                       {userRole === 'admin' && 'You are already an Admin'}
                       {userRole === 'superadmin' && 'You are already a Super Admin'}
                       {userRole === 'user' && 'Your current role is: User'}
@@ -131,7 +153,7 @@ const Profile = () => {
                       Save Changes
                     </Button>
                   </Grid>
-                </Grid>
+                {/* </Grid> */}
               </form>
             </Grid>
           </Grid>

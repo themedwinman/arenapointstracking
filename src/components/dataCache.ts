@@ -1,10 +1,6 @@
 import { houses } from "@/helper/Util";
 import { BorderColor } from "@mui/icons-material";
 import { houseColours } from "@/helper/Util";
-import { GetServerSideProps } from "next";
-import { getServerSideProps } from "@/pages";
-
-
 
 export const PointsGainedArray: Array<number> = [1000, 4000, 5000, 6000, 3000]
 

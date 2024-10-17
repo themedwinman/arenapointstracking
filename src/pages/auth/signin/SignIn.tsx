@@ -41,7 +41,7 @@ const SignIn = () => {
       <Container maxWidth="sm">
         <SignInPaper>
           <Typography variant="h4" component="h1" gutterBottom>
-            {session ? "Welcome Back!" : "Sign In"}
+            {session ? `Welcome ${session?.user?.name}!` : "Sign In"}
           </Typography>
           <Typography variant="body1" gutterBottom>
             {session ? "Thank you for logging in" : "Please log in to continue"}

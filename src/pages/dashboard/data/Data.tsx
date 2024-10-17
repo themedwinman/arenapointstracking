@@ -218,7 +218,7 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
                 value={selectedStudent}
                 getOptionLabel={(option) => option.studentId !== "None" ? `${option.name} ${option.surname} | ID: ${option.studentId} | ${option.house}` : `${option.name} ${option.surname}`}
                 isOptionEqualToValue={(option, value) => option.studentId === value?.studentId}
-                renderInput={(params) => <TextField {...params} label="Select Student (Optional)" variant="outlined" />}
+                renderInput={(params) => <TextField {...params} label="Select Student*" variant="outlined" />}
                 onChange={(event, newValue) => setSelectedStudent(newValue)}
                 clearOnEscape
               />

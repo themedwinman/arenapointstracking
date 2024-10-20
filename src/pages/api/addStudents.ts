@@ -1,6 +1,6 @@
-import { db } from "@/db"; // Import your database connection
-import { students } from "@/db/schema/students"; // Import your students table schema
-import { Student } from "./getStudents"; // Assuming the Student type is defined in getStudents
+import { db } from "@/db"; 
+import { students } from "@/db/schema/students";
+import { Student } from "./getStudents"; 
 import { NextApiRequest, NextApiResponse } from 'next';
 
 
@@ -8,8 +8,8 @@ async function addStudent(student: Student) {
   try {
     // Construct the SQL query with dynamic values from the student object
     const query = db.insert(students).values({
-      name: student.name as string, // Use actual values from the student object
-      surname: student.surname as string, // Ensure that 'surname' exists in the Student type
+      name: student.name as string, // 
+      surname: student.surname as string,
       studentId: student.studentId as string,
       house: student.house as string,
     });
@@ -17,6 +17,7 @@ async function addStudent(student: Student) {
     // Execute the SQL query
     await query.run(); // `run()` instead of `execute()` in Drizzle for inserts
   } catch (error) {
+    // Error Handling
     console.error('Database Insertion Error:', error);
     throw new Error('Failed to add student');
   }
@@ -39,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({ message: 'Student added successfully' });
     } catch (error) {
+      //error handling
       console.error('Error adding student:', error);
       return res.status(500).json({ error: 'Failed to add student' });
     }

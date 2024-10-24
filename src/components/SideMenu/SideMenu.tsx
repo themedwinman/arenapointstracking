@@ -64,6 +64,7 @@ const menuListIcons = [
   <ExitToAppIcon key={4}/>,
 ];
 
+// SideMenu component which displays the side menu of the application
 const SideMenu = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -78,6 +79,8 @@ const SideMenu = () => {
     setOpen(false);
   };
 
+
+  // return the side menu component
   return (
     <Drawer
       variant="permanent"

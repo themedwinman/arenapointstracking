@@ -24,6 +24,8 @@ export type HeaderProps = {
   ColorModeContext: React.Context<{ toggleColorMode: () => void }>;
 }
 
+
+// Header component which displays the header of the application
 const Header = (props: HeaderProps) => {
   const { ColorModeContext } = props;
   const { data: session } = useSession();
@@ -36,6 +38,8 @@ const Header = (props: HeaderProps) => {
     setAnchorElNav(event.currentTarget);
     
   };
+
+  // mobile menu
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -50,7 +54,9 @@ const Header = (props: HeaderProps) => {
 
   const tabletCheck = useMediaQuery('(min-width:768px)');
 
+  // return the header component
   return (
+    // Creates the header component, makes it sticky and sets the margin bottom to 40px
     <AppBar position="sticky" sx={{marginBottom: "40px"}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -75,6 +81,7 @@ const Header = (props: HeaderProps) => {
 
           
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          {/* The main logo for the app in the top left. */}
           <Typography
             variant="h5"
             noWrap
@@ -104,6 +111,7 @@ const Header = (props: HeaderProps) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Profile Menu">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                {/* diosplays the users google profile picture */}
                 <Avatar alt={session?.user?.name as string} src={userProfileImg} />
               </IconButton>
             </Tooltip>
@@ -136,6 +144,7 @@ const Header = (props: HeaderProps) => {
                 </NextLink>
               </MenuItem>
               <MenuItem>
+              {/* Provides the user role within the menu. */}
               Your Role: {userRole.charAt(0).toUpperCase() + userRole.slice(1, 5) + ' ' + userRole.charAt(5).toUpperCase() + userRole.slice(6)}
               </MenuItem>
                 <MenuItem onClick={() => session ? signOut() : signIn()}>

@@ -27,6 +27,7 @@ const ThemeToggleButton = (props: ThemeToggleButtonProps) => {
             {mobileCheck && (
                 <Typography>{capitalizedMode}</Typography>
             )}
+            {/* Creates the actual button for switching themes */}
             <IconButton
                 sx={{ mr: 2 }}
                 title={capitalizedMode + ' mode'}

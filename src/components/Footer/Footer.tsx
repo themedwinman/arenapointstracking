@@ -6,6 +6,9 @@ import { Paper, useTheme } from "@mui/material";
 import Link from "next/link";
 import styled from "@emotion/styled";
 
+
+// Footer component which displays the footer of the application
+
 const Footer = () => {
   const { data: session } = useSession();
   const theme = useTheme();
@@ -14,6 +17,7 @@ const Footer = () => {
     color: ${theme.palette.text.primary};
   `;
 
+  // Paper component is used to create a surface to display the footer
   return (
     <footer className={scss.footer}>
       <Paper sx={{ width: "100%" }} color={"#262626"}>

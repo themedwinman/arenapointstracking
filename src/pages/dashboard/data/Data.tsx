@@ -179,23 +179,34 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
 
   return (
     <>
+    {/* DataRibbon component */}
     <DataRibbon key={refreshKey} />
+    
     <div style={{ marginTop: '40px' }}>
-      <Head>
+      
+      {/* Page Title */}
+      <Head> 
         <title>Points Editor</title>
       </Head>
+      
+      {/* Main Grid Layout */}
       <Grid container spacing={3}>
         <Grid item xs={12}>       
-          
           <Paper className={scss.paper}>
-          <AppBar position="static">
+          
+            {/* AppBar with Title */}
+            <AppBar position="static">
               <Toolbar>
                 <Typography variant="h4" sx={{marginLeft: "auto", marginRight: "auto"}}>
                   Points Editor
                 </Typography>
               </Toolbar>
             </AppBar>
+
+            {/* Error Alert */}
             {error && <Alert severity="error">{error}</Alert>}
+            
+            {/* House Selection */}
             <FormControl fullWidth margin="normal">
               <ToggleButtonGroup
                 value={selectedHouse}
@@ -212,6 +223,8 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
                 ))}
               </ToggleButtonGroup>
             </FormControl>
+            
+            {/* Student Selection */}
             <FormControl fullWidth margin="normal">
               <Autocomplete
                 options={students}
@@ -223,6 +236,8 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
                 clearOnEscape
               />
             </FormControl>
+            
+            {/* Action Selection */}
             <FormControl fullWidth margin="normal">
               <ToggleButtonGroup
                 value={action}
@@ -234,6 +249,8 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
                 <ActionToggleButton value="remove">Remove Points</ActionToggleButton>
               </ToggleButtonGroup>
             </FormControl>
+            
+            {/* Points Input */}
             <FormControl fullWidth margin="normal">
               <TextField
                 label="Points*"
@@ -243,6 +260,8 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
                 variant="outlined"
               />
             </FormControl>
+            
+            {/* Event Description Input */}
             <FormControl fullWidth margin="normal">
               <TextField
                 label="Description*"
@@ -251,7 +270,9 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
                 variant="outlined"
               />
             </FormControl>
-            <Button type="submit" variant="contained" color="primary" onClick={(event) => handleSubmit(event)} fullWidth className={scss.submitButton}  disabled={!action}>
+            
+            {/* Submit Button */}
+            <Button type="submit" variant="contained" color="primary" onClick={(event) => handleSubmit(event)} fullWidth className={scss.submitButton} disabled={!action}>
               {!action ? "Select an Action" : action === "add" ? "Add Points" : "Remove Points"}
             </Button>
           </Paper>
@@ -261,5 +282,6 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
     </>
   );
 };
+
 
 export default withAuthorizationAdmin(Data);

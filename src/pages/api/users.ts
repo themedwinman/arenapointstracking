@@ -3,10 +3,13 @@ import { db } from '@/db';
 import { users } from '@/db/schema/users';
 import { eq, or } from 'drizzle-orm';
 
+
+// This API route is used to fetch and update user roles
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case 'GET':
       try {
+        // Fetch all users with admin or adminrequest (for unadded feature) role
         const adminUsers = await db.select().from(users)
           .where(or(eq(users.admin, true), eq(users.adminrequest, true)))
           .all();
@@ -19,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     case 'PUT':
       try {
+        // Update user role
         const { email, admin, adminrequest } = req.body;
         const updatedUser = await db.update(users)
           .set({ admin, adminrequest })

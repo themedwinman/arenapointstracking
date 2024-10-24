@@ -2,7 +2,10 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { students } from '@/db/schema/students';
 
-import { NextApiRequest, NextApiResponse } from 'next'; // Or Express types if you're using Express
+import { NextApiRequest, NextApiResponse } from 'next';
+
+
+// This API route is used to delete a student by ID
 
 export default async function deleteStudents(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'DELETE') {
@@ -12,6 +15,7 @@ export default async function deleteStudents(req: NextApiRequest, res: NextApiRe
   const { studentId } = req.body;
 
   if (!studentId) {
+    // Return an error response if the student ID is missing
     return res.status(400).json({ error: 'Missing studentId' });
   }
 

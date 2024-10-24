@@ -26,13 +26,13 @@ interface CustomPageProps {
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 
-
+// App component
 const App = ({
   Component, pageProps: { session, ...pageProps },
 }: AppProps) => {
 
 
-
+// create the color mode context
 
     const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
     const colorMode = React.useMemo(
@@ -44,7 +44,7 @@ const App = ({
       [],
     );
 
-
+// create the dark and light themes
     const darkThemeChosen = React.useMemo(
       () =>
         createTheme({
@@ -64,7 +64,7 @@ const App = ({
 
   return (
     
-
+// return the app components with the wrappers.
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={mode === 'dark' ? darkThemeChosen : lightThemeChosen}>
 

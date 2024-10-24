@@ -14,9 +14,11 @@ export type DataCardProps = {
     description: string;
   };
   
+  // DataCard component which displays the title, value and description of the data card
   const DataCard = (props: DataCardProps) => {
     const { title, value, description } = props;
     return (
+      // Paper component is used to create a surface to display the data card
       <Paper className={scss.dataCard}>
         <div className={scss.header}>
           <Typography fontSize={"h6"} color={"lightslategrey"}>

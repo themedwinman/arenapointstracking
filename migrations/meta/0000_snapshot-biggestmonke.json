@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "de9e098f-75b3-4470-8312-d7320cc7b2a4",
+  "id": "fe580feb-e75d-4fa2-8bcb-602f465d520e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "houses": {
@@ -93,6 +93,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "event_description": {
+          "name": "event_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -112,15 +119,15 @@
         }
       },
       "foreignKeys": {
-        "points_user_id_students_id_fk": {
-          "name": "points_user_id_students_id_fk",
+        "points_user_id_students_student_id_fk": {
+          "name": "points_user_id_students_student_id_fk",
           "tableFrom": "points",
           "tableTo": "students",
           "columnsFrom": [
             "user_id"
           ],
           "columnsTo": [
-            "id"
+            "student_id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

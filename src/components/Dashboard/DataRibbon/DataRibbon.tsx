@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 import DataCard from "../DataCard";
 import scss from "./DataRibbon.module.scss";
-import { TotalPointsArray } from "@/components/dataCache";
 
+// DataRibbon component which displays the total points for each house
 const DataRibbon = () => {
   interface House {
     id: number;
@@ -14,6 +14,7 @@ const DataRibbon = () => {
   const [houses, setHouses] = useState<House[]>([]);
 
   useEffect(() => {
+    // Fetch the house data from the API and set the state
     const fetchHouses = async () => {
       try {
         const response = await fetch('/api/getHouses');
@@ -26,7 +27,7 @@ const DataRibbon = () => {
 
     fetchHouses();
   }, []);
-
+// Return the DataRibbon component
   return (
     <Grid container gap={2} className={scss.dataRibbon} sx={{ "--columns": `repeat(clamp(1, ${houses.length},6), minmax(0, 1fr))` }}>
       {houses.map((house, index) => (

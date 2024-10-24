@@ -10,6 +10,7 @@ const Home: React.FC = () => {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
+    // Fetch user role from the database
     const fetchUserRole = async () => {
       setSession(session);
       console.log("Session data:", session); // Add logging
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
       console.log("Session user:", session?.user); // Add logging
 
       if (session?.user) {
+        // Get the user object from the session
         const user = session.user as ExtendedUser;
         console.log("User admin:", user.admin); // Add logging
         console.log("User superadmin:", user.superadmin); // Add logging
@@ -33,6 +35,7 @@ const Home: React.FC = () => {
   console.log("exportedDbUser before rendering:", exportedDbUser); // Add logging
 
   if (loading) {
+    // Show a loading indicator while the user role is being fetched
     return <div>Loading...</div>;
   }
 

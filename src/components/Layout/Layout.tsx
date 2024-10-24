@@ -12,7 +12,7 @@ const Layout = (props: any) => {
 
     return(
         <>
-
+    {/* // Head component is used to add metadata to the page */}
         <Head>
             <title>Arena - Dashboard</title>
             <meta name="description" content="Arena House Points Tracking" />

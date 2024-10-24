@@ -11,6 +11,7 @@ const Dashboard: React.FC = () => {
   const { user, loading } = useUser();
 
   if (loading) {
+    // Show a loading indicator while the user is being fetched
     return <div>Loading...</div>;
   }
 

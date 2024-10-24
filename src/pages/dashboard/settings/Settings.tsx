@@ -36,6 +36,7 @@ const Settings = () => {
   const handleConfirmStudentDelete = async () => {
     if (studentToDelete) {
       try {
+        // Make a DELETE request to the backend to delete the student
         const response = await fetch(`/api/deleteStudents`, {
           method: 'DELETE',
           headers: {
@@ -51,7 +52,7 @@ const Settings = () => {
           console.error(`Failed to delete student: ${errorText}`);
           return;
         }
-  
+        // Fetch the updated students list
         const updatedStudents: Student[] = await fetch('/api/getStudents').then(res => res.json());
         setStudents(updatedStudents); // Refresh the list
       } catch (error) {
@@ -84,6 +85,7 @@ const Settings = () => {
     }
   
     try {
+      // Make a POST request to the backend to add the house
       const response = await fetch('/api/addHouses', {
         method: 'POST',
         headers: {
@@ -172,7 +174,7 @@ const Settings = () => {
       setHouse(newHouse);
     }
   };
-
+  // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !surname || !studentId || !house) {
@@ -239,6 +241,7 @@ const handleCloseModal = () => {
   setHouseToDelete(null);
 };
 
+//  Add the handleConfirmDelete function
 const handleConfirmDelete = async () => {
   if (houseToDelete) {
     try {
@@ -275,7 +278,8 @@ const handleDeleteHouse = (houseName: string) => {
   handleOpenModal(houseName);
 };
 
-// Add the Modal component
+
+// Returns the JSX for the Settings page
 return (
   <>
     <Paper elevation={3} className={styles.paper}>
@@ -290,6 +294,7 @@ return (
       {error && <Alert severity="error">{error}</Alert>}
 
       <div style={{marginTop: "20px"}}>
+        {/* button to switch to students tab */}
         <Button
           onClick={() => setActiveTab('students')}
           className={styles.tabButton}
@@ -306,6 +311,7 @@ return (
         >
           Students
         </Button>
+        {/* Button to switch to houses tab */}
         <Button
           onClick={() => setActiveTab('houses')}
           className={styles.tabButton}
@@ -328,11 +334,14 @@ return (
         <div style={{ display: activeTab === 'students' ? 'block' : 'none' }}>
         {activeTab === 'students' && (
           <>
+          {/* manage students section */}
             <Typography variant="h6" gutterBottom>
               Manage Students
               </Typography>
+              {/* form for adding new students to database */}
             <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
+          {/* Name text field */}
           <TextField
             label="Name"
             value={name}
@@ -343,6 +352,7 @@ return (
           />
         </div>
         <div className={styles.formGroup}>
+          {/* Surname text field */}
           <TextField
             label="Surname"
             value={surname}
@@ -353,6 +363,7 @@ return (
           />
         </div>
         <div className={styles.formGroup}>
+          {/* Student ID Text Field */}
           <TextField
             label="Student ID"
             value={studentId}
@@ -364,6 +375,7 @@ return (
           />
         </div>
         <div className={styles.formGroupToggle}>
+          {/* House Selection Toggle */}
           <ToggleButtonGroup
             value={house}
             exclusive
@@ -390,6 +402,7 @@ return (
             ))}
           </ToggleButtonGroup>
         </div>
+        {/* Form submit button */}
         <Button type="submit" variant="contained" color="primary" className={styles.formButton} fullWidth sx={{color: theme.palette.getContrastText(theme.palette.primary.main)}}>
           Add Student
         </Button>
@@ -399,6 +412,7 @@ return (
           Current Students
         </Typography>
         <Paper>
+          {/* List to display all the current students */}
         <List>
           {students.filter(student => student.studentId !== "None").map(student => (
             <ListItem key={student.id}>
@@ -429,11 +443,13 @@ return (
         <div style={{ display: activeTab === 'houses' ? 'block' : 'none' }}>
         {activeTab === 'houses' && (
           <>
+          {/* manage houses section */}
             <Typography variant="h6" gutterBottom>
               Manage Houses
               </Typography>
             <form onSubmit={handleAddHouse}>
             <div className={styles.formGroupHouse}>
+              {/* House name text field */}
               <TextField
                 label="House Name"
                 value={newHouseName}
@@ -444,6 +460,7 @@ return (
                 />
             </div>
             <div className={styles.formGroupHouseColour}>
+              {/* House colour text field */}
               <TextField
                 label="House Color"
                 type="color"
@@ -454,6 +471,7 @@ return (
                 InputLabelProps={{ shrink: true }}
               />
               </div>
+              {/* submit form button */}
               <Button type="submit" variant="contained" color="primary" className={styles.addHouseButton} sx={{color: theme.palette.getContrastText(theme.palette.primary.main)}}>
                 Add House
               </Button>
@@ -463,6 +481,7 @@ return (
               Current Houses:
             </Typography>
             <Paper>
+              {/* List to show current houses in database. */}
               <List>
                 {houses.map(house => (
                   <ListItem key={house.id}>

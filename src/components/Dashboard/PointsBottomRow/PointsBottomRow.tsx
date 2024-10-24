@@ -32,6 +32,7 @@ const PointsBottomRow = () => {
   const [chartKey, setChartKey] = useState(0); // State variable to trigger re-render
 
   useEffect(() => {
+    // Fetch the house and points data from the API and update the state variables
     const fetchData = async () => {
       try {
         // Fetch house data
@@ -51,7 +52,7 @@ const PointsBottomRow = () => {
           console.error('Invalid data format:', housesData, pointsData);
           return;
         }
-  
+        // map the house names and colors
         const houseNames = housesData.map((house) => house.houseName || 'Unknown House');
         const houseColors = housesData.map((house) => house.houseColour || '#FFFFFF');
   
@@ -62,7 +63,7 @@ const PointsBottomRow = () => {
             0
           );
         });
-  
+          // map the house names and colors
         const pointsGainedData = houseNames.map((name) => {
           const housePoints = pointsData.filter((point) => point.associatedHouse === name);
           return housePoints.reduce((acc, point) => acc + (point.pointsGained || 0), 0);
@@ -72,7 +73,7 @@ const PointsBottomRow = () => {
           const housePoints = pointsData.filter((point) => point.associatedHouse === name);
           return housePoints.reduce((acc, point) => acc + (point.pointsLost || 0), 0);
         });
-  
+        // Update the state variables
         setTotalPoints({
           labels: houseNames,
           datasets: [{ data: totalPointsData, backgroundColor: houseColors, borderColor: ["#666"], borderWidth: [0.5], hoverOffset: [8] }],
@@ -100,6 +101,8 @@ const PointsBottomRow = () => {
     setChartKey((prevKey) => prevKey + 1);
   }, [textColor]);
 
+
+   // Doughnut chart options to provide general styling
   const doughnutChartOptions = {
     responsive: true,
     plugins: {
@@ -111,23 +114,26 @@ const PointsBottomRow = () => {
       },
     },
   };
-
+// Return the PointsBottomRow component
   return (
     <Grid container className={scss.bottomRow}>
       <Grid>
         <Paper className={scss.dataCard}>
+          {/* Chart for total points */}
           <p>Total Points Distribution</p>
           <DataChart key={chartKey} type={"doughnut"} data={totalPoints} options={doughnutChartOptions} />
         </Paper>
       </Grid>
       <Grid>
         <Paper className={scss.dataCard}>
+          {/* chart for gained points */}
           <p>Gained Points Distribution</p>
           <DataChart key={chartKey} type={"doughnut"} data={pointsGained} options={doughnutChartOptions} />
         </Paper>
       </Grid>
       <Grid>
         <Paper className={scss.dataCard}>
+          {/* chart for lost points */}
           <p>Lost Points Distribution</p>
           <DataChart key={chartKey} type={"doughnut"} data={pointsLost} options={doughnutChartOptions} />
         </Paper>

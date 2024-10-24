@@ -22,7 +22,7 @@ interface ChartData {
     backgroundColor: string | string[]; // Allow both string and array of strings
   }[];
 }
-
+// PointsOverview component which displays the total points for each house
 const PointsOverview = () => {
   const theme = useTheme();
   const textColor = theme.palette.text.primary;
@@ -30,6 +30,7 @@ const PointsOverview = () => {
   const mode = theme.palette.mode;
   const gridColor = mode === "dark" ? "#0f0f0f" : "rgb(151, 151, 151)";
 
+    // State variables to store points data
   const [barChartData, setBarChartData] = useState<ChartData>({
     labels: [],
     datasets: [{ label: "", data: [], fill: false, backgroundColor: "" }],
@@ -60,6 +61,7 @@ const PointsOverview = () => {
   });
 
   useEffect(() => {
+    // Fetch the house and points data from the API and update the state variables
     const fetchData = async () => {
       try {
         const houseResponse = await fetch('/api/getHouses');
@@ -84,6 +86,7 @@ const PointsOverview = () => {
           return typeof color === 'string' ? color : '#FFFFFF'; // Ensure it's a string
         });
 
+        // Calculate the total points for each house
         const totalPointsData = houseNames.map((name) => {
           const housePoints = pointsData.filter((point) => point.associatedHouse === name);
           return housePoints.reduce(
@@ -91,17 +94,18 @@ const PointsOverview = () => {
             0
           );
         });
-
+        // Calculate the points gained for each house
         const pointsGainedData = houseNames.map((name) => {
           const housePoints = pointsData.filter((point) => point.associatedHouse === name);
           return housePoints.reduce((acc, point) => acc + (point.pointsGained || 0), 0);
         });
-
+        // Calculate the points lost for each house
         const pointsLostData = houseNames.map((name) => {
           const housePoints = pointsData.filter((point) => point.associatedHouse === name);
           return housePoints.reduce((acc, point) => acc + (point.pointsLost || 0), 0);
         });
 
+          // Update the bar chart state
         setBarChartData({
           labels: houseNames,
           datasets: [
@@ -152,10 +156,13 @@ const PointsOverview = () => {
     Chart.defaults.font.family = font;
   }, [textColor, font]);
 
+
+  //  Return the PointsOverview component
   return (
     <Grid container gap={2} className={scss.wrapper}>
       <Paper className={scss.transactions}>
         <div className={scss.chart}>
+          {/* Bar chart */}
           <DataChart
             type={"bar"}
             data={barChartData}
@@ -185,6 +192,7 @@ const PointsOverview = () => {
             }}
           />
         </div>
+        {/* Cards for displaying lost, total and gained points */}
         <div className={scss.cardWrapper}>
           <Card className={scss.card} variant={"outlined"}>
             <div className={scss.cardTitle}>

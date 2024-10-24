@@ -6,7 +6,7 @@ interface HouseData {
   houseColour: string;
   houseTotalPoints: number;
 }
-
+// This API route is used to add a house
 async function addHouse(house: HouseData) {
   try {
     // Add some logging to debug the incoming data
@@ -27,7 +27,7 @@ async function addHouse(house: HouseData) {
   }
 };
 
-
+//The handler for the API route (middelman between the client and the database)
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { houseName, houseColour } = req.body;

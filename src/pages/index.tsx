@@ -7,10 +7,12 @@ import { exportedDbUser, ExtendedUser } from "@/pages/api/auth/[...nextauth]";
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
     const fetchUserRole = async () => {
-      const session = await getSession();
+      setSession(session);
+      console.log("Session data:", session); // Add logging
       console.log("Session data:", session); // Add logging
       console.log("Session user:", session?.user); // Add logging
 
@@ -35,8 +37,9 @@ const Home: React.FC = () => {
   }
 
   return (
+    //show the dashboard if the user is logged in, otherwise show the login page
     <main className={scss.main}>
-      {exportedDbUser ? <Dashboard /> : <Login />}
+      {!session ? <Dashboard /> : <Login />}
     </main>
   );
 };

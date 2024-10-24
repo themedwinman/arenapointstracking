@@ -136,6 +136,14 @@ const Data: React.FC<DataProps> = ({ userRole }) => {
       setError("Please select a points action.");
       return;
     }
+    if (selectedStudent === null) {
+      setError("Please select a student.");
+      return;
+    }
+    if (eventDescription === "") {
+      setError("Please enter an event description.");
+      return;
+    }
 
     try {
       const response = await fetch('/api/addPoints', {

@@ -65,7 +65,7 @@ const Header = (props: HeaderProps) => {
             variant="h6"
             noWrap
             component="a"
-            href="./Dashboard"
+            href="../"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },

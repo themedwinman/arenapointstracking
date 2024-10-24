@@ -130,7 +130,7 @@ const Profile = () => {
                     />
                   </Grid> */}
                   <Grid item xs={12}>
-                    <FormControlLabel
+                    {/* <FormControlLabel
                       control={
                         <Checkbox
                           name="adminApplication"
@@ -140,7 +140,7 @@ const Profile = () => {
                         />
                       }
                       label="Check this box to request admin access (teachers only)"
-                    />
+                    /> */}
                     <Typography variant="body1" color="textSecondary" sx={{marginBottom: 2}}>
                       {userRole === 'admin' && 'You are already an Admin'}
                       {userRole === 'superadmin' && 'You are already a Super Admin'}

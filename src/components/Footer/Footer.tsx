@@ -34,7 +34,7 @@ const Footer = () => {
           <li>
             <FooterLink href={"/dashboard/settings"}>Settings</FooterLink>
           </li>
-          <li>
+          {/* <li>
             <FooterLink href={"/#termsandconditions"}>
               Terms & Conditions
             </FooterLink>
@@ -43,7 +43,7 @@ const Footer = () => {
             <FooterLink href={"/#accessibilitystatement"}>
               Accessibility statement
             </FooterLink>
-          </li>
+          </li> */}
           <li>
             <Button
               variant={"text"}

@@ -2,10 +2,8 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { students } from '@/db/schema/students';
 
-import { NextApiRequest, NextApiResponse } from 'next';
-
-
-// This API route is used to delete a student by ID
+import { NextApiRequest, NextApiResponse } from 'next'; // Or Express types if you're using Express
+import { points } from '@/db/schema/points';
 
 export default async function deleteStudents(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'DELETE') {
@@ -15,19 +13,20 @@ export default async function deleteStudents(req: NextApiRequest, res: NextApiRe
   const { studentId } = req.body;
 
   if (!studentId) {
-    // Return an error response if the student ID is missing
     return res.status(400).json({ error: 'Missing studentId' });
   }
 
   console.log(`Received request to delete student with ID: ${studentId}`);
 
   try {
-    // Use Drizzle ORM to delete the student where the student ID matches
-    const result = await db.delete(students).where(eq(students.id, studentId)).execute();
+    // First, delete all points associated with the student
+    const pointsDeleteResult = await db.delete(points).where(eq(points.associatedStudent, studentId)).execute();
+    console.log(`Points delete result: ${JSON.stringify(pointsDeleteResult)}`);
 
-    console.log(`Delete result: ${JSON.stringify(result)}`);
+    // Then delete the student record
+    const studentDeleteResult = await db.delete(students).where(eq(students.id, studentId)).execute();
+    console.log(`Student delete result: ${JSON.stringify(studentDeleteResult)}`);
 
-    // Return a success response
     return res.status(200).json({ message: 'Student deleted successfully' });
   } catch (error) {
     console.error('Error deleting student:', error);

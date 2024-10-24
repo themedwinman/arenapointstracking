@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "fe580feb-e75d-4fa2-8bcb-602f465d520e",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "a460b701-6bcc-4969-a9ee-f733a43f00dc",
+  "prevId": "0b650a93-130f-4f60-9d8a-e27551884af8",
   "tables": {
     "houses": {
       "name": "houses",
@@ -75,9 +75,9 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "points_gained": {
@@ -102,22 +102,7 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "points_associated_house_unique": {
-          "name": "points_associated_house_unique",
-          "columns": [
-            "associated_house"
-          ],
-          "isUnique": true
-        },
-        "points_user_id_unique": {
-          "name": "points_user_id_unique",
-          "columns": [
-            "user_id"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "points_user_id_students_student_id_fk": {
           "name": "points_user_id_students_student_id_fk",
@@ -129,7 +114,7 @@
           "columnsTo": [
             "student_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -205,13 +190,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "surname": {
-          "name": "surname",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "email": {
           "name": "email",
           "type": "text",
@@ -231,6 +209,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "adminrequest": {
+          "name": "adminrequest",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         }
       },

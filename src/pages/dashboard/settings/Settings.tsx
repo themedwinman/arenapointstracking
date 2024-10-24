@@ -551,7 +551,7 @@ return (
       Confirm Delete
     </Typography>
     <Typography id="student-modal-description" sx={{ mt: 2 }}>
-      Are you sure you want to delete {studentToDelete?.name}?
+      Are you sure you want to delete {studentToDelete?.name}? This is not a recommended action as can create data inconsistency due to associated points being deleted too.
     </Typography>
     <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
       <Button onClick={handleCloseStudentModal} sx={{ mr: 2 }}>Cancel</Button>
